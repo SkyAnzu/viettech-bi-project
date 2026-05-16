@@ -1,0 +1,9 @@
+﻿id,channel_code,channel_name,channel_type,is_active,opened_date
+1,STORE-HN,Cửa hàng Hà Nội,Physical,1,2020-03-15
+2,STORE-HP,Cửa hàng Hải Phòng,Physical,1,2020-06-01
+3,STORE-HUE,Cửa hàng Huế,Physical,1,2021-01-10
+4,STORE-DN,Cửa hàng Đà Nẵng,Physical,1,2020-09-20
+5,STORE-HCM,Cửa hàng TP. Hồ Chí Minh,Physical,1,2019-11-05
+6,STORE-CT,Cửa hàng Cần Thơ,Physical,1,2021-07-01
+7,ONLINE-WEB,VietTech Web,Web,1,2020-01-01
+8,ONLINE-APP,VietTech App,App,1,2021-06-01

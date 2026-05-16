@@ -1,0 +1,52 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node
+node_modules/
+
+# Env and secrets
+.env
+.env.*
+config/.env
+config/.env.*
+!.env.example
+!config/.env.example
+*.json
+config/*.json
+*.service-account.json
+*service-account*.json
+viettech-*.json
+
+# Generated data / outputs
+data/staging/
+data/dictionary/
+output/
+logs/
+*.log
+*.parquet
+
+# Power BI binaries
+*.pbix
+*.pbit
+
+# Local tooling
+opencode.json
+CLAUDE.md
+docs/TODO.md
+docs/VALIDATION_CHECKLIST.md
+powerbi/README.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Database dumps / backups
+*.sql.bak
+*.dump
