@@ -1,91 +1,106 @@
-# VietTech BI Project (University Scope)
+# VietTech Retail BI Project
 
-Simple end-to-end BI project:
+## Tổng quan
 
-`Raw CSV -> ETL -> BigQuery Staging -> Star Schema -> Power BI`
+Đây là project Business Intelligence (BI) mô phỏng quy trình phân tích dữ liệu bán lẻ từ dữ liệu nguồn dạng CSV đến lớp dashboard trên Power BI. Mục tiêu của project là xây dựng một pipeline rõ ràng, có thể chạy lại được, đồng thời tạo ra một Data Mart phù hợp cho việc theo dõi KPI, phân tích sản phẩm, phân khúc khách hàng và vận hành đơn hàng.
 
-This repository is intentionally scoped for a university dashboard deliverable:
+Pipeline tổng thể của project:
 
-- The raw dataset is generated once with fixed business constraints and baseline row counts.
-- There is no real-time ingestion or ongoing production refresh requirement.
-- Prefer clear modeling, stable KPI definitions, and demo-ready outputs over production-style over-engineering.
+`Raw CSV -> Python ETL -> BigQuery Staging -> Star Schema -> RFM + BI Views -> Power BI`
 
-## Folder structure
-- `config/`: environment template
-- `data/raw/`: input CSV files
-- `docs/`: project report and KPI reference
-- `scripts/`: ETL and SQL runner scripts
-- `sql/`: star schema and BI query SQL files
-- `powerbi/`: dashboard screenshots used in the report
+## Project làm được gì
 
-## Quick start
-Run all commands from the project root.
+- Load dữ liệu CSV lên BigQuery staging.
+- Tạo Data Mart theo mô hình Star Schema.
+- Xây dựng các bảng dimension và fact phục vụ phân tích.
+- Tạo bảng `mart_rfm_snapshot` để phân khúc khách hàng theo mô hình RFM.
+- Tạo các BI views phục vụ KPI và đối soát nhanh.
+- Làm nguồn dữ liệu cho 4 trang dashboard Power BI.
 
-1. Create `.env` from `config/.env.example`.
-2. Install dependencies:
+## Các dashboard chính
+
+Project hiện tổ chức dashboard theo 4 góc nhìn:
+
+- Business Performance
+- Product
+- RFM
+- Order
+
+## Cấu trúc thư mục
+
+- `config/`: file cấu hình mẫu cho môi trường chạy.
+- `data/raw/`: dữ liệu đầu vào dạng CSV.
+- `docs/`: báo cáo project và tài liệu KPI.
+- `scripts/`: Python scripts để load dữ liệu và chạy SQL pipeline.
+- `sql/`: các file SQL dùng để tạo mart, RFM và BI views.
+- `powerbi/`: ảnh dashboard dùng trong báo cáo.
+
+## Cách chạy pipeline
+
+Chạy các lệnh từ thư mục gốc của project.
+
+1. Tạo file `.env` từ `config/.env.example`.
+2. Cài dependencies:
    `pip install -r scripts/requirements.txt`
-3. Load CSV data to BigQuery staging:
+3. Load dữ liệu CSV lên BigQuery staging:
    `python scripts/etl_csv_to_bq.py`
-4. Build star schema + marts:
+4. Chạy SQL pipeline để tạo Star Schema, RFM và BI views:
    `python scripts/run_sql_pipeline.py`
-5. Connect Power BI to dataset from `BQ_DATASET_MART` (default: `retailbi_mart`).
+5. Kết nối Power BI tới dataset `BQ_DATASET_MART`.
 
-## Prerequisites
+## Điều kiện để chạy
+
 - Python 3.10+
-- GCP project with BigQuery enabled
-- Service account JSON with BigQuery permissions
+- Google Cloud project đã bật BigQuery
+- Service account có quyền làm việc với BigQuery
 
-## Expected outputs
+## Kết quả đầu ra
+
+Sau khi chạy pipeline, project tạo ra:
+
 - Staging dataset: `BQ_DATASET_STG`
 - Mart dataset: `BQ_DATASET_MART`
-- Tables:
-  - `dim_date`, `dim_customer`, `dim_product`, `dim_channel`, `dim_payment`
-  - `fact_orders`, `fact_order_items`, `fact_returns`
-  - `mart_rfm_snapshot`
-- Views:
-  - `vw_monthly_kpi`, `vw_channel_performance`, `vw_return_metrics`
+
+Các bảng chính trong mart:
+
+- `dim_date`, `dim_customer`, `dim_product`, `dim_channel`, `dim_payment`
+- `fact_orders`, `fact_order_items`, `fact_returns`
+- `mart_rfm_snapshot`
+
+Các view chính:
+
+- `vw_monthly_kpi`
+- `vw_channel_performance`
+- `vw_return_metrics`
 
 ## Power BI
-- Connect to dataset `BQ_DATASET_MART`.
-- Use surrogate-key relationships from the mart model, not natural foreign IDs from the raw tables.
-- Use `vw_monthly_kpi` for executive KPI cards and monthly trends.
-- Use `vw_return_metrics` together with `vw_monthly_kpi` for return-related dashboard measures.
-- Treat the RFM page as a fixed snapshot at `2025-01-01`, not a dynamic date-sliced mart.
-- Dashboard pages: Business Performance, Product, RFM, Order.
-- Recommended slicers: year, month, channel, status.
 
-## SQL execution order
+Khi dựng dashboard trên Power BI, project sử dụng lớp dữ liệu từ mart thay vì query trực tiếp staging data.
+
+- Dùng relationship theo surrogate key trong mart model.
+- Dùng `vw_monthly_kpi` cho KPI tổng quan và xu hướng theo tháng.
+- Dùng `vw_return_metrics` cùng `vw_monthly_kpi` cho các chỉ số liên quan đến hoàn trả.
+- Dùng `mart_rfm_snapshot` cho trang phân tích khách hàng theo RFM.
+
+## Thứ tự chạy SQL
+
 1. `sql/01_create_staging_dataset.sql`
 2. `sql/02_create_star_schema.sql`
 3. `sql/03_load_star_schema.sql`
 4. `sql/04_rfm_snapshot.sql`
 5. `sql/05_bi_views.sql`
 
-## Configuration
-- `PROJECT_ID`: GCP project ID
-- `BQ_LOCATION`: BigQuery location (default: `asia-southeast1`)
-- `BQ_DATASET_STG`: staging dataset (default: `retailbi_stg`)
-- `BQ_DATASET_MART`: mart dataset (default: `retailbi_mart`)
-- `RAW_DATA_DIR`: local raw CSV folder (default: `data/raw`)
-- `CSV_DELIMITER`: CSV delimiter (default: `,`)
-- `GOOGLE_APPLICATION_CREDENTIALS`: path to service account JSON
+## Cấu hình chính
 
-## Security notes
-- Do not commit `.env` or service account JSON files.
-- Keep credentials outside the repo and reference them via `GOOGLE_APPLICATION_CREDENTIALS`.
+- `PROJECT_ID`: Google Cloud project ID
+- `BQ_LOCATION`: BigQuery location, mặc định `asia-southeast1`
+- `BQ_DATASET_STG`: tên staging dataset, mặc định `retailbi_stg`
+- `BQ_DATASET_MART`: tên mart dataset, mặc định `retailbi_mart`
+- `RAW_DATA_DIR`: thư mục chứa raw CSV, mặc định `data/raw`
+- `CSV_DELIMITER`: dấu phân cách CSV, mặc định `,`
+- `GOOGLE_APPLICATION_CREDENTIALS`: đường dẫn đến service account JSON
 
-## Core business rules
-- Revenue KPI always filters `status = 'Completed'`.
-- Include `total_completed_orders` whenever order counts are compared with completed-only revenue.
-- `avg_completed_order_value` is completed-order only.
-- `completed_discount` is completed-order only; `total_discount` remains all-status unless a report explicitly defines otherwise.
-- `ship_date_key` uses special values:
-  - `-1`: unknown or data anomaly
-  - `-2`: not yet shipped
-  - `-3`: not applicable, such as cancelled orders
-- `customers.segment` is business segment, not RFM segment.
-- `vw_return_metrics` groups returns by original order month, not by actual returned date.
-- RFM uses a fixed snapshot date of `2025-01-01` for the current fixed-dataset scope.
+## Tài liệu liên quan
 
-## KPI references
-- `docs/KPI_GLOSSARY.md`: dashboard KPI definitions and intended semantics.
+- Báo cáo chính: `docs/docs.md`
+- KPI reference: `docs/KPI_GLOSSARY.md`
