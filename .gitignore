@@ -24,7 +24,6 @@ viettech-*.json
 
 # Generated data / outputs
 data/staging/
-data/dictionary/
 output/
 logs/
 *.log
