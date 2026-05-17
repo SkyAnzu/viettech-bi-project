@@ -1,4 +1,4 @@
-# TÀI LIỆU THIẾT KẾ VÀ TRIỂN KHAI HỆ THỐNG BI BÁN LẺ
+# Hệ thống Business Intelligence (BI) hỗ trợ ra quyết định trong kinh doanh
 
 ## Thông tin dự án
 
@@ -176,14 +176,14 @@ Power BI được chọn làm công cụ trực quan hóa dữ liệu (Visualiza
 | Giai đoạn | Nội dung thực hiện | Kết quả đầu ra |
 |---|---|---|
 | Giai đoạn 1 | Chuẩn bị raw CSV snapshot | 8 file CSV cố định trong `data/raw/` |
-| Giai đoạn 2 | Load CSV lên BigQuery staging bằng Python ETL | Các bảng `stg_*` trong `retailbi_stg` |
+| Giai đoạn 2 | Load CSV lên BigQuery staging | Các bảng `stg_*` trong `retailbi_stg` |
 | Giai đoạn 3 | Biến đổi dữ liệu staging thành Star Schema | Các bảng `dim_*` và `fact_*` trong `retailbi_mart` |
 | Giai đoạn 4 | Tạo lớp phân tích phục vụ BI | `mart_rfm_snapshot`, `vw_monthly_kpi`, `vw_channel_performance` |
 | Giai đoạn 5 | Xây dựng Power BI Dashboard | 4 dashboard hoàn chỉnh: Business Performance, Product, RFM và Order |
 
 ### 4.2. Giai đoạn 1 - Chuẩn bị raw CSV snapshot
 
-Như đã đề cập, toàn bộ dữ liệu đầu vào được thu thập thông qua quá trình kết xuất (export) từ hệ thống cơ sở dữ liệu vận hành. Dữ liệu này sau đó được đóng băng (snapshot) và lưu trữ dưới dạng file CSV thô trong thư mục `data/raw/`. Đây là lớp dữ liệu nguồn dùng chung cho toàn bộ pipeline ETL/ELT, giúp nhóm tách biệt phần phân tích khỏi hệ thống vận hành và đảm bảo mọi lần chạy pipeline đều dựa trên cùng một bộ dữ liệu.
+Như đã đề cập, toàn bộ dữ liệu đầu vào được thu thập thông qua quá trình kết xuất (export) từ hệ thống cơ sở dữ liệu vận hành. Dữ liệu này sau đó được đóng băng (snapshot) và lưu trữ dưới dạng file CSV thô trong thư mục `data/raw/`. Đây là lớp dữ liệu nguồn dùng chung cho toàn bộ pipeline ELT, giúp nhóm tách biệt phần phân tích khỏi hệ thống vận hành và đảm bảo mọi lần chạy pipeline đều dựa trên cùng một bộ dữ liệu.
 
 Các file nguồn chính gồm:
 
@@ -281,16 +281,16 @@ Thứ hai là các BI views dùng để chuẩn hóa KPI và hỗ trợ đối s
 
 Các view này không thay thế fact table trong phân tích chi tiết, nhưng rất hữu ích cho việc kiểm tra định nghĩa KPI, đối chiếu số liệu tổng hợp và làm nguồn tham khảo khi dựng dashboard ở giai đoạn sau.
 
-### 4.6. Tổng kết luồng ETL/ELT và ý nghĩa đối với hệ thống BI
+### 4.6. Tổng kết luồng ELT và ý nghĩa đối với hệ thống BI
 
-Trải qua các giai đoạn từ xử lý dữ liệu thô đến mô hình hóa (Giai đoạn 1 đến Giai đoạn 4), kết quả quan trọng nhất của tiến trình ETL/ELT là kiến tạo thành công một Data Mart phân tích ổn định và chặt chẽ về mặt logic, làm bệ phóng vững chắc cho lớp trực quan hóa trên Power BI. Cụ thể, kiến trúc dữ liệu này mang lại các giá trị cốt lõi sau:
+Trải qua các giai đoạn từ xử lý dữ liệu thô đến mô hình hóa (Giai đoạn 1 đến Giai đoạn 4), kết quả quan trọng nhất của tiến trình ELT là kiến tạo thành công một Data Mart phân tích ổn định và chặt chẽ về mặt logic, làm bệ phóng vững chắc cho lớp trực quan hóa trên Power BI. Cụ thể, kiến trúc dữ liệu này mang lại các giá trị cốt lõi sau:
 
 - **Tối ưu hóa mô hình dữ liệu:** Toàn bộ dữ liệu nguồn đã được chuyển đổi thành công lên nền tảng đám mây (BigQuery) và tái cấu trúc theo mô hình Star Schema, giúp tối ưu hóa hiệu suất truy vấn cho các công cụ BI.
 - **Chuẩn hóa liên kết thực thể:** Mối quan hệ phức tạp giữa khách hàng, đơn hàng, sản phẩm, kênh phân phối và lịch sử hoàn trả được quản lý nhất quán thông qua hệ thống khóa thay thế (surrogate keys).
 - **Đồng nhất hóa logic tính toán KPI:** Các chỉ số đo lường cốt lõi (bao gồm cả các thành phần trong mô hình RFM với tiêu chí tổng giá trị chi tiêu của khách hàng được định nghĩa chặt chẽ) đều được tính toán tập trung tại tầng dữ liệu thông qua các Fact table và BI Views. Điều này giúp thiết lập một "Single Source of Truth", tránh tình trạng phân mảnh logic hay sai lệch số liệu khi tự diễn giải trên từng báo cáo BI riêng lẻ.
 - **Sẵn sàng cho tích hợp trực tiếp:** Lớp dữ liệu phân tích đã được định dạng chuẩn mực, cho phép Power BI kết nối, đọc hiểu và khai thác trực tiếp một cách liền mạch mà không cần thực hiện thêm các bước biến đổi phức tạp ở tầng ứng dụng.
 
-Như vậy, quá trình ETL/ELT đã hoàn thành trọn vẹn vai trò nền tảng: chuyển hóa dữ liệu thô thành một tập dữ liệu sạch, chuẩn hóa, có cơ sở đối soát rõ ràng để chuẩn bị cho bước xây dựng Dashboard quản trị tiếp theo.
+Như vậy, quá trình ELT đã hoàn thành trọn vẹn vai trò nền tảng: chuyển hóa dữ liệu thô thành một tập dữ liệu sạch, chuẩn hóa, có cơ sở đối soát rõ ràng để chuẩn bị cho bước xây dựng Dashboard quản trị tiếp theo.
 
 ### 4.7. Giai đoạn 5 - Xây dựng Power BI Dashboard
 
@@ -406,7 +406,7 @@ Với 4 trang dashboard trên, hệ thống BI của dự án đã có đủ cá
 
 ## PHẦN 6: ĐÁNH GIÁ KẾT QUẢ ĐẠT ĐƯỢC
 
-Sau khi hoàn thành pipeline ETL/ELT và dashboard BI trong phạm vi hiện tại, dự án đạt được các kết quả chính sau:
+Sau khi hoàn thành pipeline ELT và dashboard BI trong phạm vi hiện tại, dự án đạt được các kết quả chính sau:
 
 | Tiêu chí | Trước khi chuẩn hóa | Sau khi triển khai trong phạm vi dự án | Ý nghĩa |
 |---|---|---|---|

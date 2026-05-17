@@ -21,6 +21,7 @@ config/*.json
 *.service-account.json
 *service-account*.json
 viettech-*.json
+report/
 
 # Generated data / outputs
 data/staging/
@@ -34,8 +35,6 @@ logs/
 *.pbit
 
 # Local tooling
-opencode.json
-CLAUDE.md
 docs/TODO.md
 docs/VALIDATION_CHECKLIST.md
 powerbi/README.md
