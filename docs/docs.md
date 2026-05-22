@@ -315,7 +315,7 @@ Trong mô hình này, các fact table không còn join trực tiếp bằng khó
 
 Trong quá trình nạp dữ liệu từ staging sang Data Mart, nhóm cũng phải xử lý một số tình huống kỹ thuật cụ thể để mô hình Star Schema phản ánh đúng ngữ nghĩa nghiệp vụ và giữ được tính nhất quán khi phân tích.
 
-**Tạo và chuẩn hóa `dim_date`:** Nhóm không để các bảng fact phân tích trực tiếp trên trường ngày gốc, mà chuyển các ngày quan trọng sang `date_key` dạng `YYYYMMDD` để liên kết với bảng `dim_date`. Bảng này tách sẵn các thuộc tính như năm, quý, tháng, tuần, ngày cuối tuần, giai đoạn Tết và cuối năm, giúp Power BI phân tích theo thời gian thuận tiện hơn. Ngoài các ngày thông thường, `dim_date` còn có các dòng đặc biệt `-1`, `-2`, `-3` để xử lý các trường hợp ngày giao hàng không có giá trị thông thường.
+**Tạo và chuẩn hóa `dim_date`:** Nhóm không để các bảng fact phân tích trực tiếp trên trường ngày gốc, mà chuyển các ngày quan trọng sang `date_key` dạng `YYYYMMDD` để liên kết với bảng `dim_date`. Bảng này tách sẵn các thuộc tính như năm, quý, tháng, tuần, ngày cuối tuần, giai đoạn Tết và cuối năm, giúp Power BI phân tích theo thời gian thuận tiện hơn.
 
 ```sql
 CAST(FORMAT_DATE('%Y%m%d', d) AS INT64) AS date_key,
@@ -362,6 +362,10 @@ LEFT JOIN `your-project-id.retailbi_mart.dim_channel` dch
 ```
 
 Kết quả của giai đoạn này là một Data Mart dạng hình sao, đóng vai trò là nguồn dữ liệu chuẩn hóa cho phân tích và trực quan hóa sau này.
+
+![Mô hình Data Mart dạng Star Schema](mart.png)
+
+*Hình 4.2. Mô hình Data Mart dạng Star Schema*
 
 ### 4.6. Giai đoạn 5 - Tạo RFM Snapshot và BI Views
 
@@ -552,4 +556,3 @@ Giá trị cốt lõi mà dự án đã đạt được trong giai đoạn này 
 - Thống nhất cách hiểu KPI giữa lớp dữ liệu mart, BI views, Power BI và tài liệu.
 - Tạo được RFM snapshot phục vụ phân tích khách hàng.
 - Hoàn thiện dashboard Power BI 4 trang dựa trên nguồn dữ liệu mart đã chuẩn hóa.
-
