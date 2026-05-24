@@ -172,23 +172,7 @@ Hoàn thiện dashboard Power BI & Xây dựng dashboard 4 trang: Business Perfo
 
 Để thuận tiện cho việc theo dõi kiến trúc và logic phân tích của dự án, dưới đây là các khái niệm cốt lõi về kỹ thuật và nghiệp vụ được sử dụng xuyên suốt tài liệu:
 
-\subsubsection{2.1.1. Khái niệm về Kiến trúc Dữ liệu}
-
-\textbf{Mô hình Star Schema (Sơ đồ hình sao)}
-
-\begin{itemize}
-    \item \textbf{Định nghĩa:} Là kiến trúc tổ chức dữ liệu trong kho dữ liệu (Data Warehouse) theo chuẩn của Ralph Kimball. Mô hình bao gồm một bảng sự kiện (Fact Table) đóng vai trò trung tâm và các bảng chiều (Dimension Tables) kết nối trực tiếp xung quanh theo dạng hình sao.
-    \item \textbf{Mục đích:} Giảm số lượng và độ phức tạp của các phép JOIN nhiều tầng trong truy vấn tổng hợp báo cáo (OLAP), đồng thời giúp việc thiết lập các mối quan hệ (Relationships) trên Power BI trở nên trực quan, tường minh.
-\end{itemize}
-
-\textbf{Bảng Fact (Bảng sự kiện) và Bảng Dimension (Bảng chiều)}
-
-\begin{itemize}
-    \item \textbf{Fact Table:} Lưu trữ các số đo định lượng, các chỉ số có thể tính toán được (Measures/Metrics) sinh ra từ hoạt động nghiệp vụ (như doanh thu, số lượng, chiết khấu) và danh sách các khóa ngoại (Foreign Keys) để liên kết với các bảng chiều.
-    \item \textbf{Dimension Table:} Lưu trữ thông tin thuộc tính, mô tả bối cảnh xung quanh sự kiện kinh doanh nhằm phục vụ cho việc lọc và phân nhóm dữ liệu (ví dụ: Khách hàng là ai? Sản phẩm thuộc danh mục nào? Mua qua kênh nào? Vào thời gian nào?).
-\end{itemize}
-
-\subsubsection{2.1.2. Khái niệm về Mô hình Phân tích Khách hàng (RFM)}
+\subsubsection{2.1.1. Khái niệm về Mô hình Phân tích Khách hàng (RFM)}
 
 Nếu Star Schema giúp tổ chức dữ liệu theo hướng thuận tiện cho phân tích, thì mô hình RFM là khung lý thuyết nghiệp vụ cốt lõi nằm trên Data Mart để giải quyết bài toán phân khúc khách hàng. Thay vì chỉ đánh giá người mua qua một con số doanh thu đơn thuần, RFM chấm điểm hành vi khách hàng dựa trên ba thành phần:
 
@@ -247,6 +231,30 @@ Hệ thống sử dụng phương pháp \textbf{phân vị tương đối} để
 
 Để hiện thực hóa các mục tiêu quản trị trên thành những chỉ số đo lường được trên báo cáo, dự án đã gắn kết chặt chẽ nghiệp vụ RFM vào kiến trúc hệ thống dữ liệu. Thay vì để công cụ BI tự xử lý phân tập, toàn bộ logic chấm điểm và phân hạng được tính toán tập trung và đóng gói cố định tại bảng \code{mart\_rfm\_snapshot} ở tầng Data Mart. Sự liên kết này giúp Power BI kế thừa dữ liệu phân tích đã được chuẩn hóa, từ đó giúp dashboard hiển thị nhất quán hơn và giảm rủi ro sai lệch khi trình bày phân khúc khách hàng.
 
+\subsubsection{2.1.2. Khái niệm về Kiến trúc Dữ liệu}
+
+\textbf{Mô hình Star Schema (Sơ đồ hình sao)}
+
+\begin{itemize}
+    \item \textbf{Định nghĩa:} Là kiến trúc tổ chức dữ liệu trong kho dữ liệu (Data Warehouse) theo chuẩn của Ralph Kimball. Mô hình bao gồm một bảng sự kiện (Fact Table) đóng vai trò trung tâm và các bảng chiều (Dimension Tables) kết nối trực tiếp xung quanh theo dạng hình sao.
+    \item \textbf{Mục đích:} Giảm số lượng và độ phức tạp của các phép JOIN nhiều tầng trong truy vấn tổng hợp báo cáo (OLAP), đồng thời giúp việc thiết lập các mối quan hệ (Relationships) trên Power BI trở nên trực quan, tường minh.
+\end{itemize}
+
+\textbf{Bảng Fact (Bảng sự kiện) và Bảng Dimension (Bảng chiều)}
+
+\begin{itemize}
+    \item \textbf{Fact Table:} Lưu trữ các số đo định lượng, các chỉ số có thể tính toán được (Measures/Metrics) sinh ra từ hoạt động nghiệp vụ (như doanh thu, số lượng, chiết khấu) và danh sách các khóa ngoại (Foreign Keys) để liên kết với các bảng chiều.
+    \item \textbf{Dimension Table:} Lưu trữ thông tin thuộc tính, mô tả bối cảnh xung quanh sự kiện kinh doanh nhằm phục vụ cho việc lọc và phân nhóm dữ liệu (ví dụ: Khách hàng là ai? Sản phẩm thuộc danh mục nào? Mua qua kênh nào? Vào thời gian nào?).
+\end{itemize}
+
+\textbf{Lý do chọn Star Schema trong dự án:}
+
+\begin{itemize}
+    \item \textbf{Giảm số lần JOIN khi truy vấn:} Normalized schema (3NF) yêu cầu nhiều bảng join lại để ra một chỉ số đơn giản. Star Schema tổ chức dữ liệu theo fact và các dimension được thiết kế cho mục đích phân tích, giúp truy vấn tổng hợp dễ viết và dễ kiểm soát hơn.
+    \item \textbf{Power BI làm việc tốt với mô hình star:} Semantic model trong Power BI được thiết kế để thiết lập relationship theo dạng fact--dimension. Nếu dữ liệu vẫn ở dạng normalized nhiều bảng, việc xây dựng measure và slicer phức tạp hơn đáng kể.
+    \item \textbf{Tách biệt rõ ``số liệu'' và ``mô tả'':} Fact table chứa các sự kiện đo lường được (doanh thu, số lượng, chiết khấu); dimension table chứa ngữ cảnh để lọc và nhóm (khách hàng, sản phẩm, thời gian). Sự tách biệt này giúp người đọc dashboard hiểu logic dữ liệu dễ hơn.
+\end{itemize}
+
 \subsection{2.2. Công nghệ sử dụng}
 
 \begin{table}[H]
@@ -271,21 +279,11 @@ BigQuery được chọn vì phù hợp với đặc điểm của dự án theo
 \begin{itemize}
     \item \textbf{Serverless, không cần quản lý hạ tầng:} BigQuery không yêu cầu cài đặt hay vận hành cluster. Với phạm vi dự án, điều này giúp tập trung vào logic pipeline thay vì cấu hình server.
     \item \textbf{Hỗ trợ SQL chuẩn và phân tách dataset rõ ràng:} Cho phép tổ chức dữ liệu thành \code{retailbi\_stg} và \code{retailbi\_mart} riêng biệt, tách bạch lớp raw và lớp phân tích.
-    \item \textbf{Tích hợp tốt với Power BI:} Power BI có connector trực tiếp với BigQuery, giúp kết nối mart dataset vào dashboard không cần export thêm file trung gian.
-    \item \textbf{Phù hợp với dữ liệu dạng bảng lớn:} BigQuery tối ưu cho analytical query trên dữ liệu dạng columnar, khác với relational database vận hành vốn được tối ưu cho transactional workload.
+    \item \textbf{Giảm xử lý phức tạp ở tầng dashboard:} Các phép tổng hợp và biến đổi được đẩy xuống BigQuery, giúp Power BI tập trung vào trực quan hóa thay vì tính toán nặng.
+    \item \textbf{Tối ưu truy vấn phân tích:} BigQuery được thiết kế cho truy vấn phân tích kiểu OLAP trên dữ liệu dạng columnar, phù hợp với nhu cầu tổng hợp KPI.
 \end{itemize}
 
-\subsection{2.4. Vì sao dùng Star Schema?}
-
-Star Schema được chọn thay vì giữ nguyên cấu trúc normalized của relational database gốc vì một số lý do kỹ thuật cụ thể:
-
-\begin{itemize}
-    \item \textbf{Giảm số lần JOIN khi truy vấn:} Normalized schema (3NF) yêu cầu nhiều bảng join lại để ra một chỉ số đơn giản. Star Schema tổ chức dữ liệu theo fact và các dimension được thiết kế cho mục đích phân tích, giúp truy vấn tổng hợp dễ viết và dễ kiểm soát hơn.
-    \item \textbf{Power BI làm việc tốt với mô hình star:} Semantic model trong Power BI được thiết kế để thiết lập relationship theo dạng fact--dimension. Nếu dữ liệu vẫn ở dạng normalized nhiều bảng, việc xây dựng measure và slicer phức tạp hơn đáng kể.
-    \item \textbf{Tách biệt rõ ``số liệu'' và ``mô tả'':} Fact table chứa các sự kiện đo lường được (doanh thu, số lượng, chiết khấu); dimension table chứa ngữ cảnh để lọc và nhóm (khách hàng, sản phẩm, thời gian). Sự tách biệt này giúp người đọc dashboard hiểu logic dữ liệu dễ hơn.
-\end{itemize}
-
-\subsection{2.5. Vì sao dùng Power BI?}
+\subsection{2.4. Vì sao dùng Power BI?}
 
 Power BI được chọn làm công cụ trực quan hóa dữ liệu (Visualization) ở tầng cuối cùng của pipeline vì phù hợp với kiến trúc và mục tiêu của đồ án:
 
@@ -354,7 +352,7 @@ Giai đoạn 1 & Source Database -- Hệ thống OLTP phát sinh dữ liệu ngh
 \hline
 Giai đoạn 2 & Chuẩn bị raw CSV snapshot (export từ OLTP) & 8 file CSV cố định trong \code{data/raw/} \\
 \hline
-Giai đoạn 3 & Load CSV lên BigQuery staging bằng Python ETL & Các bảng \code{stg\_*} trong \code{retailbi\_stg} \\
+Giai đoạn 3 & Load CSV lên BigQuery staging bằng Python & Các bảng \code{stg\_*} trong \code{retailbi\_stg} \\
 \hline
 Giai đoạn 4 & Biến đổi dữ liệu staging thành Star Schema & Các bảng \code{dim\_*} và \code{fact\_*} trong \code{retailbi\_mart} \\
 \hline
@@ -448,7 +446,7 @@ Các bảng trong schema được kết nối thông qua khóa ngoại (Foreign 
 
 \subsubsection{Dữ liệu mô phỏng và kịch bản nghiệp vụ}
 
-Do phạm vi đồ án không kết nối trực tiếp vào một hệ thống OLTP production thực tế, toàn bộ dữ liệu trong schema \code{retailbi\_oltp} được tạo ra bằng script Python (\code{generate\_data.py}) với các đặc trưng sát thực tế:
+Do không kết nối trực tiếp vào một hệ thống OLTP production thực tế, toàn bộ dữ liệu trong schema \code{retailbi\_oltp} được tạo ra bằng script Python (\code{generate\_data.py}) với các đặc trưng sát thực tế:
 
 \begin{table}[H]
 \centering
@@ -477,7 +475,7 @@ Trong kiến trúc tổng thể của dự án (Phần 3), lớp Source Database
 
 \subsection{4.3. Giai đoạn 2 - Chuẩn bị raw CSV snapshot}
 
-Như đã đề cập, toàn bộ dữ liệu đầu vào được thu thập thông qua quá trình kết xuất (export) từ hệ thống cơ sở dữ liệu vận hành. Dữ liệu này sau đó được đóng băng (snapshot) và lưu trữ dưới dạng file CSV thô trong thư mục \code{data/raw/}. Đây là lớp dữ liệu nguồn dùng chung cho toàn bộ pipeline ETL/ELT, giúp nhóm tách biệt phần phân tích khỏi hệ thống vận hành và đảm bảo mọi lần chạy pipeline đều dựa trên cùng một bộ dữ liệu.
+Như đã đề cập, toàn bộ dữ liệu đầu vào được thu thập thông qua quá trình kết xuất (export) từ hệ thống cơ sở dữ liệu vận hành. Dữ liệu này sau đó được đóng băng (snapshot) và lưu trữ dưới dạng file CSV thô trong thư mục \code{data/raw/}. Đây là lớp dữ liệu nguồn dùng chung cho toàn bộ pipeline ELT, giúp nhóm tách biệt phần phân tích khỏi hệ thống vận hành và đảm bảo mọi lần chạy pipeline đều dựa trên cùng một bộ dữ liệu.
 
 Các file nguồn chính gồm:
 
@@ -834,7 +832,7 @@ Với 4 trang dashboard trên, hệ thống BI của dự án đã bao phủ cá
 
 \section{PHẦN 6: ĐÁNH GIÁ KẾT QUẢ ĐẠT ĐƯỢC}
 
-Sau khi hoàn thành pipeline ETL/ELT và dashboard BI trong phạm vi hiện tại, dự án đạt được các kết quả chính sau:
+Sau khi hoàn thành pipeline ELT và dashboard BI trong phạm vi hiện tại, dự án đạt được các kết quả chính sau:
 
 \begin{table}[H]
 \centering
@@ -859,7 +857,7 @@ Dashboard Power BI & Chưa có lớp trực quan hóa hoàn chỉnh & Đã xây 
 
 \section{PHẦN 7: KẾT LUẬN}
 
-Ở giai đoạn hiện tại, dự án VietTech BI đã xây dựng được một luồng BI tương đối đầy đủ trong phạm vi đồ án. Bắt đầu từ raw CSV snapshot, hệ thống đã nạp dữ liệu lên BigQuery staging, biến đổi sang mô hình Star Schema tại tầng Data Mart, tạo lớp RFM snapshot và BI views để hỗ trợ chuẩn hóa KPI, sau đó kết nối Power BI để xây dựng 4 dashboard phân tích phục vụ báo cáo.
+Ở giai đoạn hiện tại, dự án VietTech BI đã xây dựng được một luồng BI tương đối đầy đủ. Bắt đầu từ raw CSV snapshot, hệ thống đã nạp dữ liệu lên BigQuery staging, biến đổi sang mô hình Star Schema tại tầng Data Mart, tạo lớp RFM snapshot và BI views để hỗ trợ chuẩn hóa KPI, sau đó kết nối Power BI để xây dựng 4 dashboard phân tích phục vụ báo cáo.
 
 Giá trị cốt lõi mà dự án đã đạt được trong giai đoạn này gồm:
 
