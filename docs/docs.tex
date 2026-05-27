@@ -195,7 +195,7 @@ Nếu Star Schema giúp tổ chức dữ liệu theo hướng thuận tiện cho
 
 Phù hợp với đặc thù dữ liệu tĩnh của dự án, RFM được tính từ các đơn hàng có trạng thái \code{Completed} và chốt tại một thời điểm snapshot cố định (\code{2025-01-01}). Việc này giúp đảm bảo tính ổn định của số liệu khi trình bày và đối soát.
 
-Hệ thống sử dụng phương pháp \textbf{phân vị tương đối} để chấm điểm từ \code{1} đến \code{5} cho mỗi tiêu chí (5 là tốt nhất, 1 là thấp nhất). Khách hàng được xếp hạng dựa trên sự so sánh với toàn bộ tập dữ liệu nội bộ thay vì một ngưỡng tuyệt đối. Ba điểm số này ghép lại thành mã \code{rfm\_score} (ví dụ: \code{555}, \code{412}) và là cơ sở để phân tập khách hàng thành 5 nhóm hành vi quản trị điển hình:
+Hệ thống sử dụng phương pháp \textbf{phân vị tương đối} để chấm điểm từ \code{1} đến \code{5} cho mỗi tiêu chí (5 là tốt nhất, 1 là thấp nhất). Khách hàng được xếp hạng dựa trên sự so sánh trong tập khách hàng có đơn \code{Completed} tại thời điểm snapshot, thay vì theo một ngưỡng tuyệt đối. Ba điểm số này ghép lại thành mã \code{rfm\_score} (ví dụ: \code{555}, \code{412}) và là cơ sở để phân tập khách hàng thành 5 nhóm hành vi quản trị điển hình:
 
 {\footnotesize
 \begin{table}[H]
@@ -231,12 +231,26 @@ Hệ thống sử dụng phương pháp \textbf{phân vị tương đối} để
 
 Để hiện thực hóa các mục tiêu quản trị trên thành những chỉ số đo lường được trên báo cáo, dự án đã gắn kết chặt chẽ nghiệp vụ RFM vào kiến trúc hệ thống dữ liệu. Thay vì để công cụ BI tự xử lý phân tập, toàn bộ logic chấm điểm và phân hạng được tính toán tập trung và đóng gói cố định tại bảng \code{mart\_rfm\_snapshot} ở tầng Data Mart. Sự liên kết này giúp Power BI kế thừa dữ liệu phân tích đã được chuẩn hóa, từ đó giúp dashboard hiển thị nhất quán hơn và giảm rủi ro sai lệch khi trình bày phân khúc khách hàng.
 
-\subsubsection{2.1.2. Khái niệm về Kiến trúc Dữ liệu}
+\subsubsection{2.1.2. Khái niệm và lý do dùng mô hình ELT}
+
+ETL (Extract - Transform - Load) và ELT (Extract - Load - Transform) là hai mô hình phổ biến trong xây dựng pipeline dữ liệu. Với ETL, dữ liệu được trích xuất từ nguồn, biến đổi ở một tầng xử lý trung gian, sau đó mới được nạp vào kho dữ liệu. Ngược lại, với ELT, dữ liệu thô được nạp trước vào kho dữ liệu hoặc vùng staging, rồi mới được biến đổi bằng năng lực xử lý của nền tảng lưu trữ/phân tích.
+
+Trong dự án này, mô hình ELT được lựa chọn thay vì ETL truyền thống. Giá trị chính của luồng ELT không nằm ở xử lý thời gian thực, mà ở việc tách rõ các lớp dữ liệu: raw snapshot, staging, data mart và dashboard. Cách tổ chức này giúp từng bước xử lý có thể đối soát, giải thích và kiểm tra minh bạch hơn.
+
+\textbf{Lý do chọn ELT trong dự án:}
+
+\begin{itemize}
+    \item \textbf{Tận dụng năng lực xử lý của BigQuery:} Dữ liệu thô dạng CSV được nạp trực tiếp lên vùng staging của Google BigQuery. Các bước biến đổi sau đó được thực thi bằng SQL trên BigQuery, giúp tránh phụ thuộc vào máy local hoặc một máy chủ trung gian để xử lý dữ liệu.
+    \item \textbf{Lưu giữ bản sao nguyên bản để đối soát:} Tầng \code{retailbi\_stg} giữ dữ liệu gần với cấu trúc nguồn, giúp kiểm tra số dòng, đối chiếu dữ liệu gốc và truy vết sai lệch khi phát hiện vấn đề ở tầng phân tích.
+    \item \textbf{Chuẩn hóa logic tập trung:} Các bước biến đổi quan trọng như tạo Star Schema, xử lý khóa thay thế, chuẩn hóa KPI và tính RFM snapshot được cố định tại tầng Data Mart. Điều này giúp Power BI sử dụng cùng một nguồn dữ liệu đã chuẩn hóa, giảm rủi ro mỗi dashboard tự diễn giải chỉ số theo một cách khác nhau.
+\end{itemize}
+
+\subsubsection{2.1.3. Khái niệm về Kiến trúc Dữ liệu}
 
 \textbf{Mô hình Star Schema (Sơ đồ hình sao)}
 
 \begin{itemize}
-    \item \textbf{Định nghĩa:} Là kiến trúc tổ chức dữ liệu trong kho dữ liệu (Data Warehouse) theo chuẩn của Ralph Kimball. Mô hình bao gồm một bảng sự kiện (Fact Table) đóng vai trò trung tâm và các bảng chiều (Dimension Tables) kết nối trực tiếp xung quanh theo dạng hình sao.
+    \item \textbf{Định nghĩa:} Là kiến trúc tổ chức dữ liệu trong kho dữ liệu (Data Warehouse), trong đó một bảng sự kiện (Fact Table) đóng vai trò trung tâm và các bảng chiều (Dimension Tables) kết nối trực tiếp xung quanh theo dạng hình sao.
     \item \textbf{Mục đích:} Giảm số lượng và độ phức tạp của các phép JOIN nhiều tầng trong truy vấn tổng hợp báo cáo (OLAP), đồng thời giúp việc thiết lập các mối quan hệ (Relationships) trên Power BI trở nên trực quan, tường minh.
 \end{itemize}
 
@@ -366,11 +380,13 @@ Giai đoạn 6 & Xây dựng Power BI Dashboard & 4 dashboard hoàn chỉnh: Bus
 
 \subsection{4.2. Giai đoạn 1 - Source Database (Hệ thống OLTP)}
 
-Trước khi dữ liệu được xuất ra CSV và đưa vào pipeline phân tích, toàn bộ nghiệp vụ bán lẻ của VietTech được mô phỏng trong một hệ thống cơ sở dữ liệu quan hệ (RDBMS) theo mô hình OLTP -- schema \code{retailbi\_oltp}. Đây là lớp nguồn của dữ liệu nghiệp vụ, nơi các giao dịch như tạo đơn hàng, cập nhật sản phẩm, đăng ký khách hàng và ghi nhận hoàn trả sẽ phát sinh trong bối cảnh vận hành thực tế.
+Trước khi dữ liệu được xuất ra CSV và đưa vào pipeline phân tích, toàn bộ nghiệp vụ bán lẻ của VietTech được mô phỏng trong một hệ thống cơ sở dữ liệu quan hệ (RDBMS) theo mô hình OLTP, với schema \code{retailbi\_oltp}. Đây là lớp nguồn của dữ liệu nghiệp vụ, nơi các giao dịch như tạo đơn hàng, cập nhật sản phẩm, đăng ký khách hàng và ghi nhận hoàn trả phát sinh.
 
-\subsubsection{Kiến trúc tổng thể của OLTP Schema}
+Hệ thống được triển khai trên \textbf{MySQL 8.0+ (InnoDB)} với character set \code{utf8mb4}, chứa dữ liệu trải dài trong phạm vi 2 năm (01/01/2023--31/12/2024).
 
-Schema \code{retailbi\_oltp} được triển khai trên MySQL với character set \code{utf8mb4}, bao gồm \textbf{8 bảng} tổ chức theo quan hệ chuẩn hóa (3NF) phục vụ cho hoạt động giao dịch:
+\subsubsection{Nguyên tắc thiết kế cơ sở dữ liệu}
+
+Schema \code{retailbi\_oltp} được tổ chức theo hướng chuẩn hóa \textbf{3NF (Third Normal Form)} để đảm bảo toàn vẹn dữ liệu trong vận hành. Tuy nhiên, nhóm có áp dụng kỹ thuật \textbf{denormalization có chủ đích} tại bảng \code{orders}. Bảng này lưu sẵn các trường tổng hợp như \code{total\_amount}, \code{total\_discount}, \code{net\_amount} và \code{total\_cost}, giúp việc export, đối soát và truy vấn tổng hợp từ tầng nguồn thuận tiện hơn mà không cần liên tục join lại với chi tiết đơn hàng.
 
 \begin{figure}[H]
     \centering
@@ -380,7 +396,7 @@ Schema \code{retailbi\_oltp} được triển khai trên MySQL với character s
     \textit{Hình 4.1. Entity Relationship Diagram (ERD) của schema retailbi\_oltp}
 \end{center}
 
-\subsubsection{Mô tả chi tiết các bảng}
+\subsubsection{Mô tả chi tiết 8 bảng thực thể}
 
 \begin{samepage}
 \textbf{Nhóm bảng danh mục (Reference/Master Data)}
@@ -391,15 +407,15 @@ Schema \code{retailbi\_oltp} được triển khai trên MySQL với character s
 \renewcommand{\arraystretch}{1.15}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|Y|>{\raggedright\arraybackslash}p{0.30\textwidth}|}
 \hline
-\textbf{Bảng} & \textbf{Vai trò} & \textbf{Trường chính} \\
+\textbf{Bảng} & \textbf{Vai trò} & \textbf{Đặc điểm dữ liệu} \\
 \hline
-{\footnotesize\code{sales\_channels}} & Lưu thông tin các kênh bán hàng (cửa hàng vật lý, web, app) & \fieldcell{\code{channel\_code},\\ \code{channel\_name},\\ \code{channel\_type}\\ (Physical/Web/App)} \\
+{\footnotesize\code{sales\_channels}} & Lưu 8 kênh bán hàng của VietTech (Physical, Web, App). & Kênh online (Web/App) cùng các cửa hàng vật lý tạo thành lớp phân tích hiệu quả theo kênh bán. \\
 \hline
-\fieldcell{{\footnotesize\code{product\_}}\\{\footnotesize\code{categories}}} & Phân loại sản phẩm theo danh mục và danh mục con & \fieldcell{\code{category},\\ \code{sub\_category}} \\
+\fieldcell{{\footnotesize\code{product\_}}\\{\footnotesize\code{categories}}} & Phân loại sản phẩm 2 cấp độ (category và sub-category). & 14 sub-categories bao phủ 6 nhóm hàng công nghệ chính. \\
 \hline
-{\footnotesize\code{products}} & Danh mục sản phẩm, bao gồm giá vốn, giá niêm yết, tồn kho & \fieldcell{\code{product\_code}, \code{cost\_price},\\ \code{msrp}, \code{quantity\_in\_stock}} \\
+{\footnotesize\code{products}} & Lưu trữ 47 mã SKU, giá vốn (\code{cost\_price}) và giá bán niêm yết (\code{msrp}). & Giá tại bảng này phản ánh giá hiện tại ở cuối năm 2024, phục vụ lớp danh mục sản phẩm. \\
 \hline
-{\footnotesize\code{customers}} & Thông tin khách hàng: nhân khẩu học, địa lý, phân khúc & \fieldcell{\code{customer\_code}, \code{segment}\\ (Consumer/Corporate/Home\\ Office), \code{city},\\ \code{registered\_date}} \\
+{\footnotesize\code{customers}} & Thông tin nhận dạng, nhân khẩu học và phân khúc kinh doanh (Consumer/Corporate/Home Office). & 5.000 hồ sơ khách hàng, là nguồn định danh để liên kết với đơn hàng trong các bước phân tích phía sau. \\
 \hline
 \end{tabularx}
 }
@@ -415,15 +431,15 @@ Schema \code{retailbi\_oltp} được triển khai trên MySQL với character s
 \renewcommand{\arraystretch}{1.15}
 \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{0.22\textwidth}|Y|>{\raggedright\arraybackslash}p{0.30\textwidth}|}
 \hline
-\textbf{Bảng} & \textbf{Vai trò} & \textbf{Trường chính} \\
+\textbf{Bảng} & \textbf{Vai trò} & \textbf{Đặc điểm dữ liệu} \\
 \hline
-{\footnotesize\code{orders}} & Đơn hàng tổng hợp: trạng thái, phương thức thanh toán, kênh, tổng tiền & \fieldcell{\code{order\_code}, \code{status},\\ \code{payment\_method},\\ \code{total\_amount}, \code{net\_amount},\\ \code{total\_cost}} \\
+{\footnotesize\code{orders}} & Bảng giao dịch trung tâm lưu header đơn hàng, trạng thái và tài chính tổng hợp. & 21.435 đơn hàng; có index trên \code{customer\_id}, \code{status} và \code{order\_date} để hỗ trợ truy vấn theo khách hàng, trạng thái đơn và thời gian đặt hàng. \\
 \hline
-{\footnotesize\code{order\_details}} & Chi tiết từng dòng sản phẩm trong đơn hàng & \fieldcell{\code{quantity}, \code{unit\_price},\\ \code{unit\_cost}, \code{discount\_rate},\\ \code{line\_profit}} \\
+{\footnotesize\code{order\_details}} & Lưu từng dòng sản phẩm (SKU) trong đơn hàng, kèm giá bán, giá vốn và chiết khấu tại thời điểm mua. & Ràng buộc UNIQUE trên \code{order\_id} và \code{product\_id} không cho phép trùng sản phẩm trong cùng một đơn. \\
 \hline
-{\footnotesize\code{order\_returns}} & Lịch sử hoàn trả đơn hàng, lý do, thời điểm & \fieldcell{\code{reason}, \code{returned\_at}} \\
+{\footnotesize\code{order\_returns}} & Ghi nhận lịch sử hoàn trả đơn hàng, gồm lý do và thời điểm hoàn trả. & Quan hệ 1:1 với \code{orders}; tỷ lệ hoàn trả khoảng 6\% tổng số đơn hàng. \\
 \hline
-\fieldcell{{\footnotesize\code{product\_price\_}}\\{\footnotesize\code{history}}} & Lịch sử thay đổi giá MSRP và giá vốn theo thời gian & \fieldcell{\code{price\_type}, \code{old\_price},\\ \code{new\_price}, \code{changed\_at}} \\
+\fieldcell{{\footnotesize\code{product\_price\_}}\\{\footnotesize\code{history}}} & Lưu vết các lần thay đổi giá MSRP và giá vốn theo thời gian. & Gồm \code{price\_type}, \code{old\_price}, \code{new\_price} và \code{changed\_at}, giúp truy vết lịch sử biến động giá sản phẩm. \\
 \hline
 \end{tabularx}
 }
@@ -444,30 +460,18 @@ Các bảng trong schema được kết nối thông qua khóa ngoại (Foreign 
     \item \code{product\_price\_history} $\rightarrow$ \code{products} (N:1): lịch sử giá theo từng sản phẩm.
 \end{itemize}
 
-\subsubsection{Dữ liệu mô phỏng và kịch bản nghiệp vụ}
+\subsubsection{Quy trình sinh dữ liệu mô phỏng (Synthetic Data Generation)}
 
-Do không kết nối trực tiếp vào một hệ thống OLTP production thực tế, toàn bộ dữ liệu trong schema \code{retailbi\_oltp} được tạo ra bằng script Python (\code{generate\_data.py}) với các đặc trưng sát thực tế:
+Do không thể kết nối trực tiếp vào hệ thống OLTP production thực tế, dữ liệu trong schema \code{retailbi\_oltp} được tạo ra thông qua script Python (\code{generate\_data.py}) với thông số \code{SEED = 42} để đảm bảo tính tái lập (reproducibility). Dữ liệu được sinh ra mô phỏng hành vi mua sắm tại Việt Nam:
 
-\begin{table}[H]
-\centering
-\begin{tabularx}{\textwidth}{|p{0.32\textwidth}|Y|}
-\hline
-\textbf{Thực thể} & \textbf{Quy mô} \\
-\hline
-Khách hàng (\code{customers}) & khoảng 5.000 khách hàng \\
-\hline
-Sản phẩm (\code{products}) & Đa dạng danh mục: Smartphones, Laptops, Tablets, Accessories, Networking, Storage \\
-\hline
-Kênh bán (\code{sales\_channels}) & 8 kênh: 6 cửa hàng vật lý (Hà Nội, Hải Phòng, Huế, Đà Nẵng, HCM, Cần Thơ) + Web + App \\
-\hline
-Đơn hàng (\code{orders}) & khoảng 21.000 đơn hàng trong giai đoạn 2023--2024 \\
-\hline
-Giao dịch (\code{order\_details}) & Nhiều dòng chi tiết theo từng đơn hàng \\
-\hline
-\end{tabularx}
-\end{table}
+\begin{itemize}
+    \item \textbf{Nhóm hành vi nội bộ khi sinh dữ liệu:} Trong quá trình sinh dữ liệu, khách hàng được gán các nhãn hành vi nội bộ như VIP, Loyal, Regular, Occasional và Churned để điều chỉnh số lượng đơn hàng, thời điểm mua và mức độ hoạt động khác nhau. Các nhãn này chỉ phục vụ mô phỏng dữ liệu và không được ghi ra bảng \code{customers}.
+    \item \textbf{Tính mùa vụ (Seasonality):} Phân phối đơn hàng tập trung cao vào các dịp cuối năm, tháng 12 và cận Tết Nguyên Đán (tháng 1, tháng 2), đồng thời giảm nhẹ vào quý 2.
+    \item \textbf{Logic bán chéo (Cross-selling):} Hệ thống giả lập hành vi mua kèm phụ kiện, ví dụ khách mua smartphone có xác suất mua thêm ốp lưng, tai nghe hoặc cáp sạc.
+    \item \textbf{Mô hình chiết khấu và thanh toán:} Phương thức thanh toán thay đổi theo kênh bán; Web/App ưu tiên E-Wallet, còn cửa hàng vật lý ưu tiên tiền mặt. Chiết khấu được áp dụng mạnh hơn vào các dịp lễ lớn.
+\end{itemize}
 
-Dữ liệu được tạo với SEED cố định (\code{SEED = 42}) để đảm bảo tính tái lập (reproducibility), phù hợp với đặc thù snapshot tĩnh của đồ án. Các trạng thái đơn hàng bao gồm: \code{Pending}, \code{Processing}, \code{Shipped}, \code{Completed}, \code{Cancelled}, \code{Returned} -- phản ánh các trạng thái chính trong vòng đời đơn hàng của bộ dữ liệu mô phỏng.
+Kết quả của tiến trình này là 8 file CSV snapshot trong thư mục \code{data/raw/}. Script cũng sinh file \code{data.sql} chứa các câu lệnh \code{INSERT} theo batch, giúp dựng lại source database trên MySQL khi cần.
 
 \subsubsection{Vai trò của Source Database trong pipeline}
 
@@ -475,7 +479,9 @@ Trong kiến trúc tổng thể của dự án (Phần 3), lớp Source Database
 
 \subsection{4.3. Giai đoạn 2 - Chuẩn bị raw CSV snapshot}
 
-Như đã đề cập, toàn bộ dữ liệu đầu vào được thu thập thông qua quá trình kết xuất (export) từ hệ thống cơ sở dữ liệu vận hành. Dữ liệu này sau đó được đóng băng (snapshot) và lưu trữ dưới dạng file CSV thô trong thư mục \code{data/raw/}. Đây là lớp dữ liệu nguồn dùng chung cho toàn bộ pipeline ELT, giúp nhóm tách biệt phần phân tích khỏi hệ thống vận hành và đảm bảo mọi lần chạy pipeline đều dựa trên cùng một bộ dữ liệu.
+Sau khi Source Database đã được dựng và vận hành với đầy đủ nghiệp vụ mô phỏng trong giai đoạn 2023--2024, dự án tiến hành xuất (export) toàn bộ dữ liệu ra dưới dạng các tệp văn bản thô. Dữ liệu này được đóng băng (snapshot) với thời điểm cắt dữ liệu (cut-off date) là \textbf{31/12/2024} và lưu trữ trong thư mục \code{data/raw/}.
+
+Việc chuyển đổi từ SQL Database sang dạng file CSV nhằm thiết lập một ranh giới rõ ràng: \textbf{cô lập tiến trình phân tích BI (OLAP) khỏi hệ thống vận hành giao dịch (OLTP)}, đảm bảo không gây ảnh hưởng hiệu năng hệ thống nguồn.
 
 Các file nguồn chính gồm:
 
@@ -490,7 +496,7 @@ Các file nguồn chính gồm:
     \item \code{sales\_channels.csv}
 \end{itemize}
 
-Ở lớp này, dữ liệu được giữ gần với cấu trúc gốc nhất có thể. Nhóm không áp dụng biến đổi nghiệp vụ trực tiếp trên file CSV mà dành phần chuẩn hóa và mô hình hóa cho các bước xử lý phía sau trên BigQuery.
+Ở lớp này, dữ liệu hoàn toàn là nguyên bản (raw). Nhóm chưa áp dụng bất kỳ phép biến đổi (transform) hay làm sạch nào. Dữ liệu sẽ tiếp tục được đưa lên Cloud Data Warehouse (BigQuery) để bắt đầu quá trình mô hình hóa.
 
 \subsection{4.4. Giai đoạn 3 - Load CSV lên BigQuery Staging}
 
@@ -531,27 +537,49 @@ Sau khi dữ liệu đã có mặt trong staging, dự án sử dụng script \c
     \item \code{05\_bi\_views.sql}
 \end{enumerate}
 
-Trọng tâm của giai đoạn này là chuyển dữ liệu từ cấu trúc bảng nguồn sang mô hình Star Schema trong dataset \code{retailbi\_mart}.
+Trọng tâm của giai đoạn này là chuyển dữ liệu từ cấu trúc bảng nguồn sang mô hình Star Schema trong dataset \code{retailbi\_mart}. Data Mart được chia thành hai nhóm bảng chính: dimension table để mô tả ngữ cảnh phân tích và fact table để lưu các sự kiện có thể đo lường được.
 
-Các bảng dimension được tạo gồm:
+\textbf{Các bảng Dimension}
 
-\begin{itemize}
-    \item \code{dim\_date}
-    \item \code{dim\_customer}
-    \item \code{dim\_product}
-    \item \code{dim\_channel}
-    \item \code{dim\_payment}
-\end{itemize}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{|p{0.2\textwidth}|Y|Y|}
+\hline
+\textbf{Bảng} & \textbf{Vai trò} & \textbf{Cấu tạo chính} \\
+\hline
+\code{dim\_date} & Cung cấp trục thời gian dùng chung cho các phân tích theo ngày đặt hàng, ngày giao hàng và ngày hoàn trả. & Gồm \code{date\_key}, ngày, năm, quý, tháng, tuần, thứ trong tuần, cờ cuối tuần, giai đoạn Tết và cuối năm. Bảng này cũng có các dòng đặc biệt \code{-1}, \code{-2}, \code{-3} để biểu diễn ngày không xác định, chưa giao và không áp dụng. \\
+\hline
+\code{dim\_customer} & Mô tả khách hàng để lọc, nhóm và phân tích theo hồ sơ khách hàng. & Gồm \code{customer\_key}, \code{customer\_id}, mã khách hàng, họ tên, giới tính, thành phố, quốc gia, business segment và trạng thái hoạt động. \\
+\hline
+\code{dim\_product} & Mô tả sản phẩm và danh mục sản phẩm phục vụ phân tích doanh thu, lợi nhuận theo sản phẩm. & Gồm \code{product\_key}, \code{product\_id}, mã/tên sản phẩm, category, sub-category, brand, giá niêm yết, giá vốn và trạng thái hoạt động. \\
+\hline
+\code{dim\_channel} & Mô tả kênh bán hàng để phân tích hiệu quả theo kênh. & Gồm \code{channel\_key}, \code{channel\_id}, mã kênh, tên kênh, loại kênh, cờ online/offline và trạng thái hoạt động. \\
+\hline
+\code{dim\_payment} & Mô tả phương thức thanh toán, giúp phân tích hành vi thanh toán và tránh lặp dữ liệu theo từng đơn hàng. & Gồm \code{payment\_key}, phương thức thanh toán và nhóm thanh toán như Cash, Card hoặc Digital. Bảng này được tạo sau khi loại bỏ trùng lặp \code{payment\_method}. \\
+\hline
+\end{tabularx}
+\end{table}
 
-Các bảng fact được tạo gồm:
+\textbf{Các bảng Fact}
 
-\begin{itemize}
-    \item \code{fact\_orders}
-    \item \code{fact\_order\_items}
-    \item \code{fact\_returns}
-\end{itemize}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{|p{0.2\textwidth}|Y|Y|}
+\hline
+\textbf{Bảng} & \textbf{Vai trò} & \textbf{Cấu tạo chính} \\
+\hline
+\code{fact\_orders} & Lưu sự kiện ở cấp đơn hàng, là bảng fact chính để tính KPI tổng quan như số đơn, doanh thu, chiết khấu, net amount và cost. & Gồm \code{order\_key}, \code{order\_id}, mã đơn, \code{order\_date\_key}, \code{ship\_date\_key}, các khóa dimension khách hàng/kênh/thanh toán, trạng thái đơn và các chỉ số tiền tệ cấp đơn. \\
+\hline
+\code{fact\_order\_items} & Lưu sự kiện ở cấp dòng sản phẩm trong đơn hàng, phục vụ phân tích sản phẩm, số lượng bán, doanh thu dòng hàng và lợi nhuận dòng hàng. & Gồm \code{order\_item\_key}, \code{order\_key}, \code{product\_key}, \code{order\_date\_key}, số lượng, đơn giá, giá vốn, tỷ lệ/giá trị chiết khấu, \code{line\_total}, \code{line\_cost} và \code{line\_profit}. \\
+\hline
+\code{fact\_returns} & Lưu sự kiện hoàn trả, giúp phân tích đơn hàng bị trả lại và lý do hoàn trả. & Gồm \code{return\_key}, \code{order\_key}, \code{returned\_date\_key} và \code{reason}. Bảng vẫn giữ \code{order\_id} để đối soát với dữ liệu nguồn khi cần. \\
+\hline
+\end{tabularx}
+\end{table}
 
-Trong mô hình này, các fact table không còn join trực tiếp bằng khóa tự nhiên của dữ liệu nguồn mà dùng surrogate key để kết nối với dimension. Riêng \code{fact\_order\_items} và \code{fact\_returns} vẫn giữ \code{order\_id} cho mục đích đối soát, nhưng đồng thời bổ sung \code{order\_key} để liên kết nhất quán với \code{fact\_orders} ở tầng BI.
+Trong mô hình này, các dimension đóng vai trò là lớp ngữ cảnh để lọc và nhóm dữ liệu, còn các fact là lớp sự kiện dùng để tính toán chỉ số. \code{fact\_orders} liên kết với \code{dim\_customer}, \code{dim\_channel}, \code{dim\_payment} và \code{dim\_date}. \code{fact\_order\_items} liên kết với \code{fact\_orders}, \code{dim\_product} và \code{dim\_date}. \code{fact\_returns} liên kết với \code{fact\_orders} và \code{dim\_date}. Các fact table không còn join trực tiếp bằng khóa tự nhiên của dữ liệu nguồn mà dùng surrogate key để kết nối với dimension. Riêng \code{fact\_order\_items} và \code{fact\_returns} vẫn giữ \code{order\_id} cho mục đích đối soát, nhưng đồng thời bổ sung \code{order\_key} để liên kết nhất quán với \code{fact\_orders} ở tầng BI.
 
 \subsubsection{Một số xử lý kỹ thuật trong quá trình load Star Schema}
 
@@ -708,7 +736,7 @@ Business Performance Dashboard & Hiệu quả kinh doanh tổng quan đang như 
 \hline
 Product Dashboard & Danh mục sản phẩm nào tạo doanh thu và lợi nhuận tốt hơn? & Doanh thu và lợi nhuận theo danh mục, tốc độ bán sản phẩm, xu hướng doanh thu theo quý, chiết khấu - doanh thu - số lượng theo sản phẩm và thương hiệu & \begin{tabular}[t]{@{}l@{}}\code{fact\_order\_items}, \\ \code{fact\_orders}, \\ \code{dim\_product}, \\ \code{dim\_channel}\end{tabular} \\
 \hline
-RFM Dashboard & Khách hàng đang được phân nhóm ra sao theo hành vi mua hàng? & Số khách theo \code{rfm\_segment}, giá trị chi tiêu theo segment, bảng chi tiết khách hàng, độ gần đây, tần suất mua, gợi ý hành động theo segment & \begin{tabular}[t]{@{}l@{}}\code{mart\_rfm\_snapshot}, \\ \code{dim\_customer}\end{tabular} \\
+RFM Dashboard & Khách hàng đang được phân nhóm ra sao theo hành vi mua hàng? & Số khách theo \code{rfm\_segment}, giá trị chi tiêu theo từng phân khúc RFM, bảng chi tiết khách hàng, độ gần đây, tần suất mua, gợi ý hành động theo từng phân khúc RFM & \begin{tabular}[t]{@{}l@{}}\code{mart\_rfm\_snapshot}, \\ \code{dim\_customer}\end{tabular} \\
 \hline
 Order Dashboard & Những ngoại lệ và đặc điểm vận hành đơn hàng cần theo dõi là gì? & Phương thức thanh toán theo kênh, tổng số đơn theo trạng thái, tỷ lệ hủy theo kênh, tỷ lệ hoàn trả theo ngữ cảnh sản phẩm, chi tiết ngoại lệ đơn hàng & \begin{tabular}[t]{@{}l@{}}\code{fact\_orders}, \\ \code{fact\_returns}, \\ \code{fact\_order\_items}, \\ \code{dim\_channel}, \\ \code{dim\_payment}, \\ \code{dim\_product}, \\ \code{dim\_date}\end{tabular} \\
 \hline
@@ -791,9 +819,9 @@ Trang Product Dashboard đi sâu vào hiệu quả kinh doanh ở cấp sản ph
 Trang RFM Dashboard là lớp phân tích khách hàng chuyên biệt của hệ thống. Trang này dùng trực tiếp \code{mart\_rfm\_snapshot} để thể hiện phân khúc hành vi khách hàng, thay vì tính RFM động trong Power BI. Nhờ đó, logic phân nhóm được cố định và nhất quán với phần mô hình hóa đã trình bày ở các phần trước.
 
 \begin{itemize}
-    \item Treemap thể hiện tổng số khách hàng theo \code{rfm\_segment}.
-    \item Biểu đồ cột thể hiện giá trị chi tiêu theo từng segment.
-    \item Bảng chi tiết khách hàng gồm thành phố, \code{rfm\_segment}, \code{monetary\_value}, \code{recency\_days}, \code{frequency\_orders} và gợi ý hành động theo segment.
+    \item Treemap thể hiện số khách trong RFM snapshot theo \code{rfm\_segment}.
+    \item Biểu đồ cột thể hiện giá trị chi tiêu theo từng phân khúc RFM.
+    \item Bảng chi tiết khách hàng gồm thành phố, \code{rfm\_segment}, \code{monetary\_value}, \code{recency\_days}, \code{frequency\_orders} và gợi ý hành động theo từng phân khúc RFM.
 \end{itemize}
 
 Trang này đặc biệt hữu ích khi trình bày ý nghĩa ứng dụng của RFM trong BI, vì nó cho thấy không chỉ khách hàng được chia thành nhóm nào mà còn gợi mở cách doanh nghiệp có thể hành động với từng nhóm khách hàng cụ thể. Phần gợi ý hành động được thể hiện ở lớp dashboard dựa trên phân khúc RFM, thay vì là một trường nghiệp vụ có sẵn trong bảng mart.
