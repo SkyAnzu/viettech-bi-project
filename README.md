@@ -6,7 +6,7 @@
 
 Pipeline tổng thể của project:
 
-`Raw CSV -> Python ETL -> BigQuery Staging -> Star Schema -> RFM + BI Views -> Power BI`
+`Raw CSV -> Python Loader -> BigQuery Staging -> SQL Transform -> Star Schema -> RFM + BI Views -> Power BI`
 
 ## Project làm được gì
 
@@ -29,7 +29,7 @@ Project hiện tổ chức dashboard theo 4 góc nhìn:
 ## Cấu trúc thư mục
 
 - `config/`: file cấu hình mẫu cho môi trường chạy.
-- `data/raw/`: dữ liệu đầu vào dạng CSV.
+- `data/raw/`: dữ liệu nguồn dạng CSV, kèm script/schema SQL dùng để dựng dữ liệu OLTP mô phỏng.
 - `docs/`: báo cáo project và tài liệu KPI.
 - `scripts/`: Python scripts để load dữ liệu và chạy SQL pipeline.
 - `sql/`: các file SQL dùng để tạo mart, RFM và BI views.

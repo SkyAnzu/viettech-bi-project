@@ -573,3 +573,11 @@ Giá trị cốt lõi mà dự án đã đạt được trong giai đoạn này 
 - Thống nhất cách hiểu KPI giữa lớp dữ liệu mart, BI views, Power BI và tài liệu.
 - Tạo được RFM snapshot phục vụ phân tích khách hàng.
 - Hoàn thiện dashboard Power BI 4 trang dựa trên nguồn dữ liệu mart đã chuẩn hóa.
+
+---
+
+## PHỤ LỤC A: MÃ NGUỒN VÀ TÀI LIỆU DỰ ÁN
+
+Mã nguồn và tài liệu của dự án được lưu tại repository GitHub sau:
+
+https://github.com/SkyAnzu/viettech-bi-project
