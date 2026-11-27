@@ -1,2 +1,6 @@
+# Optional cloud dependencies for live BigQuery ingestion & SQL execution.
+# Note: The local SQLite warehouse (`scripts/run_local_warehouse.py`),
+# BigQuery SQL `--dry-run` validator, and automated test suite (`tests/`)
+# run with pure Python 3.10+ stdlib (zero external packages required).
 google-cloud-bigquery==3.25.0
 python-dotenv==1.0.1

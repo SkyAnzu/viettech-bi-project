@@ -1,36 +1,50 @@
--- Rendered by run_sql_pipeline.py.
--- Fixed snapshot date.
+-- 04_rfm_snapshot.sql
+-- Parameterized, idempotent multi-snapshot RFM customer segmentation mart.
+-- Deletes and recomputes only the requested {{SNAPSHOT_DATE}} partition.
+-- Rendered by scripts/run_sql_pipeline.py.
 
-CREATE OR REPLACE TABLE `your-project-id.retailbi_mart.mart_rfm_snapshot` AS
-WITH params AS (
-  SELECT DATE '2025-01-01' AS snapshot_date
-),
-rfm_base AS (
+DECLARE snapshot_dt DATE DEFAULT DATE '{{SNAPSHOT_DATE}}';
+
+DELETE FROM `{{PROJECT_ID}}.{{BQ_DATASET_MART}}.mart_rfm_snapshot`
+WHERE snapshot_date = snapshot_dt;
+
+INSERT INTO `{{PROJECT_ID}}.{{BQ_DATASET_MART}}.mart_rfm_snapshot` (
+  snapshot_date,
+  customer_key,
+  customer_id,
+  recency_days,
+  frequency_orders,
+  monetary_value,
+  r_score,
+  f_score,
+  m_score,
+  rfm_score,
+  rfm_segment
+)
+WITH rfm_base AS (
   SELECT
     fo.customer_key,
-    DATE_DIFF(
-      p.snapshot_date,
-      PARSE_DATE('%Y%m%d', CAST(MAX(fo.order_date_key) AS STRING)),
-      DAY
-    ) AS recency_days,
+    DATE_DIFF(snapshot_dt, MAX(fo.order_date), DAY) AS recency_days,
     COUNT(*) AS frequency_orders,
-    SUM(fo.net_amount) AS monetary_value,
-    p.snapshot_date
-  FROM `your-project-id.retailbi_mart.fact_orders` fo
-  CROSS JOIN params p
+    SUM(fo.net_amount) AS monetary_value
+  FROM `{{PROJECT_ID}}.{{BQ_DATASET_MART}}.fact_orders` AS fo
   WHERE fo.status = 'Completed'
-  GROUP BY fo.customer_key, p.snapshot_date
+    AND fo.order_date < snapshot_dt
+  GROUP BY fo.customer_key
 ),
 scored AS (
   SELECT
-    *,
+    customer_key,
+    recency_days,
+    frequency_orders,
+    monetary_value,
     NTILE(5) OVER (ORDER BY recency_days DESC) AS r_score,
-    NTILE(5) OVER (ORDER BY frequency_orders) AS f_score,
-    NTILE(5) OVER (ORDER BY monetary_value) AS m_score
+    NTILE(5) OVER (ORDER BY frequency_orders ASC) AS f_score,
+    NTILE(5) OVER (ORDER BY monetary_value ASC) AS m_score
   FROM rfm_base
 )
 SELECT
-  s.snapshot_date,
+  snapshot_dt AS snapshot_date,
   s.customer_key,
   dc.customer_id,
   s.recency_days,
@@ -39,7 +53,11 @@ SELECT
   s.r_score,
   s.f_score,
   s.m_score,
-  CONCAT(CAST(s.r_score AS STRING), CAST(s.f_score AS STRING), CAST(s.m_score AS STRING)) AS rfm_score,
+  CONCAT(
+    CAST(s.r_score AS STRING),
+    CAST(s.f_score AS STRING),
+    CAST(s.m_score AS STRING)
+  ) AS rfm_score,
   CASE
     WHEN s.r_score >= 4 AND s.f_score >= 4 AND s.m_score >= 4 THEN 'Champions'
     WHEN s.r_score >= 3 AND s.f_score >= 3 THEN 'Loyal'
@@ -47,6 +65,6 @@ SELECT
     WHEN s.r_score <= 2 AND s.f_score <= 2 THEN 'Churned'
     ELSE 'Regular'
   END AS rfm_segment
-FROM scored s
-LEFT JOIN `your-project-id.retailbi_mart.dim_customer` dc
+FROM scored AS s
+LEFT JOIN `{{PROJECT_ID}}.{{BQ_DATASET_MART}}.dim_customer` AS dc
   ON s.customer_key = dc.customer_key;
