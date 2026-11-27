@@ -1,0 +1,451 @@
+{
+  "metadata": {
+    "dataset_disclosure": "SYNTHETIC DATASET (VietTech Electronics retail simulation, 2023-01-06 to 2024-12-31)",
+    "generated_at_utc": "2026-11-27 19:33:16",
+    "python_version": "3.12.10",
+    "sqlite_version": "3.49.1",
+    "os": "Windows 11 (AMD64)",
+    "cpu_count": 16,
+    "snapshot_date": "2025-01-01"
+  },
+  "warehouse_summary": {
+    "total_orders": 21435,
+    "completed_orders": 16796,
+    "completed_revenue_vnd": 380360467955.0,
+    "completed_cost_vnd": 273216234000.0,
+    "gross_profit_vnd": 107144233955.0,
+    "gross_margin_pct": 28.17,
+    "completed_discount_vnd": 13977222045.0,
+    "total_order_items": 39548,
+    "total_returns": 1288,
+    "return_revenue_vnd": 29446815953.0,
+    "temporal_return_anomalies": 4,
+    "clean_avg_return_lead_days": 13.11,
+    "scd2": {
+      "total_versions": 71,
+      "distinct_products": 47,
+      "price_change_versions": 24
+    },
+    "rfm_segments": [
+      {
+        "rfm_segment": "Champions",
+        "customers": 754,
+        "avg_recency_days": 9.1,
+        "avg_frequency": 5.72,
+        "total_monetary": 114069485634.0
+      },
+      {
+        "rfm_segment": "Loyal",
+        "customers": 1305,
+        "avg_recency_days": 21.7,
+        "avg_frequency": 4.32,
+        "total_monetary": 111959129507.0
+      },
+      {
+        "rfm_segment": "At-risk",
+        "customers": 843,
+        "avg_recency_days": 143.9,
+        "avg_frequency": 4.3,
+        "total_monetary": 81351454226.0
+      },
+      {
+        "rfm_segment": "Churned",
+        "customers": 1093,
+        "avg_recency_days": 374.5,
+        "avg_frequency": 1.52,
+        "total_monetary": 39200233710.0
+      },
+      {
+        "rfm_segment": "Regular",
+        "customers": 843,
+        "avg_recency_days": 19.3,
+        "avg_frequency": 1.85,
+        "total_monetary": 33780164878.0
+      }
+    ]
+  },
+  "benchmark_a_incremental_watermark": {
+    "full_refresh": {
+      "mode": "full",
+      "watermark": null,
+      "iterations": 5,
+      "orders_processed": 21435,
+      "details_processed": 39548,
+      "returns_processed": 1288,
+      "total_fact_rows_processed": 62271,
+      "p50_ms": 841.92,
+      "p95_ms": 903.14,
+      "mean_ms": 854.74
+    },
+    "incremental_30d_2024_12_02": {
+      "mode": "incremental",
+      "watermark": "2024-12-02 00:00:00",
+      "iterations": 5,
+      "orders_processed": 3116,
+      "details_processed": 5762,
+      "returns_processed": 201,
+      "total_fact_rows_processed": 9079,
+      "p50_ms": 122.85,
+      "p95_ms": 126.84,
+      "mean_ms": 122.14,
+      "orders_created_in_window": 3017,
+      "late_updated_orders_captured": 99,
+      "order_row_reduction_pct": 85.46,
+      "total_fact_row_reduction_pct": 85.42,
+      "speedup_x": 6.85
+    },
+    "incremental_1d_2024_12_31": {
+      "mode": "incremental",
+      "watermark": "2024-12-31 00:00:00",
+      "iterations": 5,
+      "orders_processed": 485,
+      "details_processed": 897,
+      "returns_processed": 4,
+      "total_fact_rows_processed": 1386,
+      "p50_ms": 36.61,
+      "p95_ms": 41.26,
+      "mean_ms": 36.28,
+      "orders_created_in_window": 216,
+      "late_updated_orders_captured": 269,
+      "order_row_reduction_pct": 97.74,
+      "total_fact_row_reduction_pct": 97.77,
+      "speedup_x": 23.0
+    }
+  },
+  "benchmark_b_query_indexing": [
+    {
+      "id": "Q1_monthly_kpi",
+      "title": "Q1: 24-Month Executive KPI Rollup (`vw_monthly_kpi`)",
+      "row_count": 24,
+      "unindexed": {
+        "runs": 50,
+        "row_count": 24,
+        "p50_ms": 27.04,
+        "p95_ms": 36.706,
+        "mean_ms": 28.531,
+        "min_ms": 24.553,
+        "plan": [
+          "CO-ROUTINE vw_monthly_kpi",
+          "SCAN fo",
+          "SEARCH dd USING INTEGER PRIMARY KEY (rowid=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "SCAN vw_monthly_kpi",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "indexed": {
+        "runs": 50,
+        "row_count": 24,
+        "p50_ms": 19.596,
+        "p95_ms": 23.483,
+        "mean_ms": 20.061,
+        "min_ms": 17.163,
+        "plan": [
+          "CO-ROUTINE vw_monthly_kpi",
+          "SCAN fo USING COVERING INDEX idx_fact_orders_status_date_cover",
+          "SEARCH dd USING COVERING INDEX idx_dim_date_ym (date_key=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "SCAN vw_monthly_kpi",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "speedup_p50_x": 1.38,
+      "speedup_p95_x": 1.56
+    },
+    {
+      "id": "Q2_filtered_channel_orders",
+      "title": "Q2: Filtered Completed Web Orders by Date (2024)",
+      "row_count": 366,
+      "unindexed": {
+        "runs": 50,
+        "row_count": 366,
+        "p50_ms": 8.119,
+        "p95_ms": 11.979,
+        "mean_ms": 8.601,
+        "min_ms": 6.718,
+        "plan": [
+          "SCAN fo",
+          "SEARCH dc USING INDEX sqlite_autoindex_dim_channel_1 (channel_key=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "indexed": {
+        "runs": 50,
+        "row_count": 366,
+        "p50_ms": 2.484,
+        "p95_ms": 3.635,
+        "mean_ms": 2.567,
+        "min_ms": 1.711,
+        "plan": [
+          "SEARCH dc USING COVERING INDEX idx_dim_channel_type (channel_type=?)",
+          "SEARCH fo USING COVERING INDEX idx_fact_orders_status_channel_date (status=? AND channel_key=? AND order_date>? AND order_date<?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "speedup_p50_x": 3.27,
+      "speedup_p95_x": 3.3
+    },
+    {
+      "id": "Q3_scd2_product_margin_history",
+      "title": "Q3: Historical Product Margin by SCD2 Version (`vw_product_margin_history`)",
+      "row_count": 118,
+      "unindexed": {
+        "runs": 50,
+        "row_count": 118,
+        "p50_ms": 130.617,
+        "p95_ms": 169.344,
+        "mean_ms": 134.53,
+        "min_ms": 116.205,
+        "plan": [
+          "CO-ROUTINE vw_product_margin_history",
+          "SCAN foi",
+          "SEARCH fo USING INDEX sqlite_autoindex_fact_orders_1 (order_key=?)",
+          "SEARCH dp2 USING INDEX sqlite_autoindex_dim_product_scd2_1 (product_version_key=?)",
+          "SEARCH dd USING INTEGER PRIMARY KEY (rowid=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "SCAN vw_product_margin_history",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "indexed": {
+        "runs": 50,
+        "row_count": 118,
+        "p50_ms": 99.322,
+        "p95_ms": 129.998,
+        "mean_ms": 102.747,
+        "min_ms": 92.205,
+        "plan": [
+          "CO-ROUTINE vw_product_margin_history",
+          "SEARCH fo USING COVERING INDEX idx_fact_orders_status_order_key (status=?)",
+          "SEARCH foi USING COVERING INDEX idx_fact_order_items_order_key (order_key=?)",
+          "SEARCH dp2 USING INDEX sqlite_autoindex_dim_product_scd2_1 (product_version_key=?)",
+          "SEARCH dd USING INTEGER PRIMARY KEY (rowid=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "SCAN vw_product_margin_history",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "speedup_p50_x": 1.32,
+      "speedup_p95_x": 1.3
+    },
+    {
+      "id": "Q4_rfm_segment_aggregation",
+      "title": "Q4: RFM Segment x Customer Tier Aggregation (`mart_rfm_snapshot`)",
+      "row_count": 15,
+      "unindexed": {
+        "runs": 50,
+        "row_count": 15,
+        "p50_ms": 7.447,
+        "p95_ms": 10.605,
+        "mean_ms": 8.017,
+        "min_ms": 6.607,
+        "plan": [
+          "SEARCH r USING INDEX sqlite_autoindex_mart_rfm_snapshot_1 (snapshot_date=?)",
+          "SEARCH c USING INDEX sqlite_autoindex_dim_customer_1 (customer_key=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "indexed": {
+        "runs": 50,
+        "row_count": 15,
+        "p50_ms": 5.02,
+        "p95_ms": 6.939,
+        "mean_ms": 5.208,
+        "min_ms": 4.07,
+        "plan": [
+          "SEARCH r USING COVERING INDEX idx_mart_rfm_snapshot_seg (snapshot_date=?)",
+          "SEARCH c USING COVERING INDEX idx_dim_customer_key_seg (customer_key=?)",
+          "USE TEMP B-TREE FOR GROUP BY",
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      },
+      "speedup_p50_x": 1.48,
+      "speedup_p95_x": 1.53
+    }
+  ],
+  "dq_scorecard": [
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 1,
+      "check_name": "pk_uniqueness_and_not_null",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "0 NULL or duplicate PKs across 9 star-schema tables",
+      "observed_value": "violations=0 (dim_date=2925, dim_customer=5000, dim_product=47, dim_product_scd2=71, dim_channel=8, dim_payment=4, fact_orders=21435, fact_order_items=39548, fact_returns=1288)",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 2,
+      "check_name": "zero_orphan_foreign_keys",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "0 orphan FK references across fact_orders, fact_order_items, fact_returns",
+      "observed_value": "orphans=0",
+      "failed_count": 0,
+      "details": "All 11 FK paths verified 100% intact",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 3,
+      "check_name": "three_way_financial_reconciliation",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "ABS(stg_orders - fact_orders) < 0.01 AND ABS(fact_orders - fact_order_items) < 0.01",
+      "observed_value": "completed_rev=380,360,467,955 VND, completed_cost=273,216,234,000 VND, max_diff=0.0000 VND",
+      "failed_count": 0,
+      "details": "stg_rev=380,360,467,955.00 | fact_orders_rev=380,360,467,955.00 | fact_items_rev=380,360,467,955.00",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 4,
+      "check_name": "vw_monthly_kpi_reconciliation",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "vw_monthly_kpi revenue & gross_profit match fact_orders (diff < 0.01 VND)",
+      "observed_value": "vw_rev=380,360,467,955 VND, vw_profit=107,144,233,955 VND, diff=0.0000 VND",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 5,
+      "check_name": "fact_orders_arithmetic_invariant",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "net_amount = total_amount - total_discount (tol < 0.01 VND)",
+      "observed_value": "mismatched_rows=0",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 6,
+      "check_name": "fact_order_items_arithmetic_invariant",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "line_profit = line_total - line_cost (tol < 0.01 VND)",
+      "observed_value": "mismatched_rows=0",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 7,
+      "check_name": "dim_product_scd2_integrity",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "Contiguous non-overlapping SCD2 intervals and is_current=1 matches dim_product 100%",
+      "observed_value": "versions=71, violations=0",
+      "failed_count": 0,
+      "details": "bad_bounds=0, gaps_or_overlaps=0, bad_current=0, price_mismatch=0",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 8,
+      "check_name": "fact_order_items_scd2_coverage",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "100% of fact_order_items map to valid point-in-time dim_product_scd2 version",
+      "observed_value": "mapped=39548/39548, unmapped=0",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 9,
+      "check_name": "dim_customer_pdpl_privacy",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "Zero PII columns (email, phone, date_of_birth, raw name) exposed in dim_customer",
+      "observed_value": "exposed_cols=[], email_leaks=0",
+      "failed_count": 0,
+      "details": "Approved mart columns: ['city', 'country', 'customer_code', 'customer_id', 'customer_key', 'customer_name_masked', 'gender', 'is_active', 'registered_date', 'segment']",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 10,
+      "check_name": "mart_rfm_snapshot_bounds_and_uniqueness",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "r/f/m scores in 1..5, recency_days >= 0, 0 duplicate (snapshot_date, customer_key)",
+      "observed_value": "rows=4838, bounds_fail=0, duplicates=0",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 11,
+      "check_name": "return_order_status_integrity",
+      "severity": "CRITICAL",
+      "status": "PASS",
+      "expected_rule": "Every fact_returns row links to a fact_orders row with status = 'Returned'",
+      "observed_value": "mismatched_status_rows=0",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 12,
+      "check_name": "temporal_return_anomalies",
+      "severity": "WARNING",
+      "status": "WARN",
+      "expected_rule": "Monitor returns with returned_at < order_date and isolate from avg_return_lead_days",
+      "observed_value": "flagged_rows=4 (return_ids=[800, 1100, 1187, 1211])",
+      "failed_count": 4,
+      "details": "Isolated via is_temporal_anomaly = 1 so vw_return_metrics.avg_return_lead_days remains unskewed",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 13,
+      "check_name": "missing_online_fulfillment_ship_date",
+      "severity": "WARNING",
+      "status": "WARN",
+      "expected_rule": "Monitor Web/App Completed orders missing ship_date (mapped to sentinel -1; Physical pickup mapped to -3)",
+      "observed_value": "online_missing=333, physical_pickup_sentinels=134",
+      "failed_count": 333,
+      "details": "Distinguishes genuine online logistics gaps (-1) from valid in-store Physical pickup (-3)",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 14,
+      "check_name": "missing_physical_shipped_ship_date",
+      "severity": "WARNING",
+      "status": "WARN",
+      "expected_rule": "Monitor Physical channel orders with status='Shipped' but NULL ship_date",
+      "observed_value": "flagged_rows=6",
+      "failed_count": 6,
+      "details": "Mapped to ship_date_key = -1 (Unknown) for fulfillment ops follow-up",
+      "checked_at": "2026-11-27 19:33:24"
+    },
+    {
+      "run_id": "bench_20261127T193324Z",
+      "check_number": 15,
+      "check_name": "staging_natural_key_uniqueness",
+      "severity": "WARNING",
+      "status": "PASS",
+      "expected_rule": "0 duplicate business codes across stg_orders, stg_customers, stg_products",
+      "observed_value": "duplicates=0 (orders=0, customers=0, products=0)",
+      "failed_count": 0,
+      "details": "",
+      "checked_at": "2026-11-27 19:33:24"
+    }
+  ]
+}
