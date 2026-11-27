@@ -20,7 +20,11 @@ jobs:
 
       - name: Syntax check Python scripts
         run: |
-          python -m py_compile scripts/etl_csv_to_bq.py scripts/run_sql_pipeline.py data/raw/generate_data.py
+          python -m py_compile scripts/etl_csv_to_bq.py scripts/run_sql_pipeline.py scripts/run_local_warehouse.py scripts/contract_validator.py scripts/analytics_mining.py data/raw/generate_data.py
+
+      - name: Pre-ingestion Data Contract & Lineage validation
+        run: |
+          python scripts/contract_validator.py --raw-dir data/raw --contract config/data_contracts.json --emit-lineage benchmarks/lineage_manifest.json
 
       - name: BigQuery SQL dry-run render check (full & incremental)
         run: |
@@ -28,10 +32,11 @@ jobs:
           python scripts/run_sql_pipeline.py --dry-run --mode incremental --watermark "2024-12-02 00:00:00"
           python scripts/etl_csv_to_bq.py --dry-run
 
-      - name: Run local SQLite warehouse (full + benchmark)
+      - name: Run local SQLite warehouse (full + benchmark) & Prescriptive Data Mining
         run: |
           python scripts/run_local_warehouse.py --mode full --benchmark
+          python scripts/analytics_mining.py
 
-      - name: Run automated warehouse test suite
+      - name: Run automated warehouse, contract & analytics test suite
         run: |
           python -m unittest discover -s tests -v

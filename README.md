@@ -71,6 +71,17 @@ flowchart LR
 | **Critical DQ Gates (11 checks)** | PK, FK, 3-way reconciliation, SCD2, PDPL PII, RFM bounds | **`11 / 11 PASS`** (`0` orphans, `0` PII email/phone/DOB columns in `dim_customer`) |
 | **Monitored Source Warnings (4 checks)** | Operational & temporal anomaly detection | Caught **`4`** `returned_at < order_date` rows (`[800, 1100, 1187, 1211]`), **`333`** missing online ship dates (separated from `134` physical pickups), **`6`** missing physical shipped dates |
 
+### D. Pre-Ingestion Data Contracts, Lineage DAG & Prescriptive Data Mining (`INT3209E`)
+
+Full reproducible outputs: [`config/data_contracts.json`](./config/data_contracts.json) · [`benchmarks/lineage_manifest.json`](./benchmarks/lineage_manifest.json) · [`benchmarks/analytics_mining_report.md`](./benchmarks/analytics_mining_report.md)
+
+| Enterprise Capability | Method & Guardrails | Verified Empirical Outcome (`[SYNTHETIC]`) |
+| :--- | :--- | :--- |
+| **Pre-Ingestion Data Contracts & Lineage** | Schema/type/enum/null-rate/volume-drift validator + dead-letter `dq_quarantine_records` + DAG export | `67,364 / 67,364` clean rows (`0` critical schema errors), flags `4` temporal return anomalies pre-load, exports **`38`-node / `70`-edge** PDPL-verified lineage manifest |
+| **Market Basket Analysis** (`mart_market_basket_rules`) | Pairwise Support / Confidence / **Lift** on `16,796` Completed baskets (`84` rules persisted) | Top cross-sell: `MacBook -> External SSD & HDD` (**`Lift = 2.559x`**), `MACBOOK-PRO-M3 -> WD-PASSPORT-2TB` (**`Lift = 3.091x`**); exposes popularity trap `Network Switch -> Charger & Cable` (`23.55%` conf yet **`Lift = 0.850x`**) |
+| **K-Means++ vs. RFM `NTILE(5)`** (`mart_rfm_kmeans_clusters`) | `log1p + Z-score` scaling (eliminating `>99.9999%` VND Euclidean dominance) across `k=3..6` | Optimal **`k = 3`** (`Silhouette = 0.3594` vs. `0.3088` at `k=5`): `C0 VIP High-Value` (`57.32%` customers) drives **`79.75%`** of revenue |
+| **Leakage-Free Return-Risk Scoring** (`mart_return_risk_scores`) | Strictly temporal `2023 train -> 2024 out-of-time test` L2 class-weighted Logistic Regression (order-time features only; point-in-time `returned_at` observability + `26`-order Dec-2023 cutoff maturation gate) | `ROC-AUC = 0.4986`, `PR-AUC = 0.0707` (vs. `0.0704` prevalence) — honestly confirms **0 target leakage** on synthetic i.i.d. random return assignment rather than fabricated AUC |
+
 ---
 
 ## 4. Power BI Executive Dashboards & Star Schema
@@ -101,17 +112,23 @@ flowchart LR
 ### Option A: Zero-Cloud Local Warehouse, Benchmarks & Automated Tests (Python 3.10+ stdlib only)
 
 ```bash
+# 0. Validate Pre-Ingestion Data Contracts & emit 38-node Lineage DAG
+python scripts/contract_validator.py --emit-lineage benchmarks/lineage_manifest.json
+
 # 1. Build full local Star Schema + SCD2 + RFM + 15-check DQ + Benchmarks (~2 seconds)
 python scripts/run_local_warehouse.py --mode full --benchmark
 
-# 2. Run incremental watermark CDC simulation
+# 2. Run Prescriptive Data Mining (Market Basket Lift, K-Means++ vs RFM, Leakage-Free Return Scoring)
+python scripts/analytics_mining.py
+
+# 3. Run incremental watermark CDC simulation
 python scripts/run_local_warehouse.py --mode incremental --watermark "2024-12-02 00:00:00"
 
-# 3. Validate BigQuery SQL template rendering & CSV BOM hygiene offline
+# 4. Validate BigQuery SQL template rendering & CSV BOM hygiene offline
 python scripts/etl_csv_to_bq.py --dry-run
 python scripts/run_sql_pipeline.py --dry-run
 
-# 4. Run full automated test suite
+# 5. Run full automated test suite (20 tests: warehouse + contracts + data mining)
 python -m unittest discover -s tests -v
 ```
 

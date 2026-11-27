@@ -1,0 +1,1109 @@
+{
+  "metadata": {
+    "dataset_disclosure": "SYNTHETIC DATASET (VietTech Electronics retail simulation, 2023-01-06 to 2024-12-31)",
+    "generated_at_utc": "2026-11-27 21:09:55",
+    "python_version": "3.12.10",
+    "sqlite_version": "3.49.1",
+    "os": "Windows 11 (AMD64)",
+    "cpu_count": 16,
+    "seed": 42,
+    "snapshot_date": "2025-01-01",
+    "db_path": "D:\\Job\\projects\\viettech-bi-project\\data\\warehouse\\viettech_mart.db",
+    "total_duration_ms": 4151.86
+  },
+  "module_1_market_basket": {
+    "duration_ms": 187.82,
+    "persisted_rules_total": 84,
+    "persisted_sku_rules": 50,
+    "persisted_sub_category_rules": 34,
+    "sku_level": {
+      "total_baskets": 16796,
+      "multi_item_baskets": 9368,
+      "multi_item_share_pct": 55.78,
+      "distinct_items": 47,
+      "candidate_pairs_evaluated": 1061,
+      "rules_passing_threshold": 520,
+      "positive_lift_rules_count": 366,
+      "top_rules": [
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "SAMSUNG-T7-1TB",
+          "consequent_label": "Samsung T7 SSD 1TB",
+          "co_occurrences": 158,
+          "antecedent_count": 841,
+          "consequent_count": 891,
+          "total_baskets": 16796,
+          "support": 0.009407,
+          "confidence": 0.187872,
+          "consequent_support": 0.053048,
+          "lift": 3.541516,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "SAMSUNG-T7-1TB",
+          "antecedent_label": "Samsung T7 SSD 1TB",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 158,
+          "antecedent_count": 891,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.009407,
+          "confidence": 0.177329,
+          "consequent_support": 0.050071,
+          "lift": 3.541516,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "MACBOOK-PRO-M3",
+          "antecedent_label": "MacBook Pro 14\" M3",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 52,
+          "antecedent_count": 336,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.003096,
+          "confidence": 0.154762,
+          "consequent_support": 0.050071,
+          "lift": 3.090822,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "MACBOOK-PRO-M3",
+          "consequent_label": "MacBook Pro 14\" M3",
+          "co_occurrences": 52,
+          "antecedent_count": 841,
+          "consequent_count": 336,
+          "total_baskets": 16796,
+          "support": 0.003096,
+          "confidence": 0.061831,
+          "consequent_support": 0.020005,
+          "lift": 3.090822,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "LENOVO-THINKPAD",
+          "antecedent_label": "Lenovo ThinkPad E14",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 62,
+          "antecedent_count": 407,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.003691,
+          "confidence": 0.152334,
+          "consequent_support": 0.050071,
+          "lift": 3.042336,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "LENOVO-THINKPAD",
+          "consequent_label": "Lenovo ThinkPad E14",
+          "co_occurrences": 62,
+          "antecedent_count": 841,
+          "consequent_count": 407,
+          "total_baskets": 16796,
+          "support": 0.003691,
+          "confidence": 0.073722,
+          "consequent_support": 0.024232,
+          "lift": 3.042336,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "ASUS-VIVOBOOK15",
+          "antecedent_label": "Asus VivoBook 15",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 73,
+          "antecedent_count": 498,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.004346,
+          "confidence": 0.146586,
+          "consequent_support": 0.050071,
+          "lift": 2.927544,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "ASUS-VIVOBOOK15",
+          "consequent_label": "Asus VivoBook 15",
+          "co_occurrences": 73,
+          "antecedent_count": 841,
+          "consequent_count": 498,
+          "total_baskets": 16796,
+          "support": 0.004346,
+          "confidence": 0.086801,
+          "consequent_support": 0.02965,
+          "lift": 2.927544,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "HP-ENVY-X360",
+          "antecedent_label": "HP Envy x360 15",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 58,
+          "antecedent_count": 402,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.003453,
+          "confidence": 0.144279,
+          "consequent_support": 0.050071,
+          "lift": 2.881455,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "HP-ENVY-X360",
+          "consequent_label": "HP Envy x360 15",
+          "co_occurrences": 58,
+          "antecedent_count": 841,
+          "consequent_count": 402,
+          "total_baskets": 16796,
+          "support": 0.003453,
+          "confidence": 0.068966,
+          "consequent_support": 0.023934,
+          "lift": 2.881455,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "ASUS-VIVOBOOK15",
+          "antecedent_label": "Asus VivoBook 15",
+          "consequent": "SAMSUNG-T7-1TB",
+          "consequent_label": "Samsung T7 SSD 1TB",
+          "co_occurrences": 76,
+          "antecedent_count": 498,
+          "consequent_count": 891,
+          "total_baskets": 16796,
+          "support": 0.004525,
+          "confidence": 0.15261,
+          "consequent_support": 0.053048,
+          "lift": 2.876818,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "SAMSUNG-T7-1TB",
+          "antecedent_label": "Samsung T7 SSD 1TB",
+          "consequent": "ASUS-VIVOBOOK15",
+          "consequent_label": "Asus VivoBook 15",
+          "co_occurrences": 76,
+          "antecedent_count": 891,
+          "consequent_count": 498,
+          "total_baskets": 16796,
+          "support": 0.004525,
+          "confidence": 0.085297,
+          "consequent_support": 0.02965,
+          "lift": 2.876818,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "MACBOOK-AIR-M2",
+          "antecedent_label": "MacBook Air 13\" M2",
+          "consequent": "WD-PASSPORT-2TB",
+          "consequent_label": "WD My Passport 2TB",
+          "co_occurrences": 62,
+          "antecedent_count": 431,
+          "consequent_count": 841,
+          "total_baskets": 16796,
+          "support": 0.003691,
+          "confidence": 0.143852,
+          "consequent_support": 0.050071,
+          "lift": 2.872925,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "WD-PASSPORT-2TB",
+          "antecedent_label": "WD My Passport 2TB",
+          "consequent": "MACBOOK-AIR-M2",
+          "consequent_label": "MacBook Air 13\" M2",
+          "co_occurrences": 62,
+          "antecedent_count": 841,
+          "consequent_count": 431,
+          "total_baskets": 16796,
+          "support": 0.003691,
+          "confidence": 0.073722,
+          "consequent_support": 0.025661,
+          "lift": 2.872925,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "LENOVO-THINKPAD",
+          "antecedent_label": "Lenovo ThinkPad E14",
+          "consequent": "SAMSUNG-T7-1TB",
+          "consequent_label": "Samsung T7 SSD 1TB",
+          "co_occurrences": 62,
+          "antecedent_count": 407,
+          "consequent_count": 891,
+          "total_baskets": 16796,
+          "support": 0.003691,
+          "confidence": 0.152334,
+          "consequent_support": 0.053048,
+          "lift": 2.87161,
+          "is_positive_lift": 1
+        }
+      ],
+      "popularity_trap_examples": [
+        {
+          "antecedent": "IPHONE-15-PRO",
+          "antecedent_label": "iPhone 15 Pro 128GB",
+          "consequent": "CABLE-USB-C-1M",
+          "consequent_label": "Cáp USB-C 1m 60W PD",
+          "co_occurrences": 50,
+          "antecedent_count": 625,
+          "consequent_count": 1359,
+          "total_baskets": 16796,
+          "support": 0.002977,
+          "confidence": 0.08,
+          "consequent_support": 0.080912,
+          "lift": 0.988727,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "SAM-S24",
+          "antecedent_label": "Samsung Galaxy S24",
+          "consequent": "CASE-IPHONE15",
+          "consequent_label": "Ốp lưng iPhone 15 chính hãng",
+          "co_occurrences": 41,
+          "antecedent_count": 513,
+          "consequent_count": 1349,
+          "total_baskets": 16796,
+          "support": 0.002441,
+          "confidence": 0.079922,
+          "consequent_support": 0.080317,
+          "lift": 0.995086,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "XIA-14-PRO",
+          "antecedent_label": "Xiaomi 14 Pro",
+          "consequent": "SCREEN-PROT-UNI",
+          "consequent_label": "Kính cường lực 9H Universal",
+          "co_occurrences": 38,
+          "antecedent_count": 477,
+          "consequent_count": 1395,
+          "total_baskets": 16796,
+          "support": 0.002262,
+          "confidence": 0.079665,
+          "consequent_support": 0.083055,
+          "lift": 0.959173,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "SAM-S24-ULTRA",
+          "antecedent_label": "Samsung Galaxy S24 Ultra",
+          "consequent": "CASE-SAM-S24",
+          "consequent_label": "Ốp lưng Samsung S24 Series",
+          "co_occurrences": 38,
+          "antecedent_count": 482,
+          "consequent_count": 1328,
+          "total_baskets": 16796,
+          "support": 0.002262,
+          "confidence": 0.078838,
+          "consequent_support": 0.079066,
+          "lift": 0.997113,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "SAM-A55",
+          "antecedent_label": "Samsung Galaxy A55",
+          "consequent": "SCREEN-PROT-UNI",
+          "consequent_label": "Kính cường lực 9H Universal",
+          "co_occurrences": 51,
+          "antecedent_count": 656,
+          "consequent_count": 1395,
+          "total_baskets": 16796,
+          "support": 0.003036,
+          "confidence": 0.077744,
+          "consequent_support": 0.083055,
+          "lift": 0.936048,
+          "is_positive_lift": 0
+        }
+      ]
+    },
+    "sub_category_level": {
+      "total_baskets": 16796,
+      "multi_item_baskets": 9227,
+      "multi_item_share_pct": 54.94,
+      "distinct_items": 14,
+      "candidate_pairs_evaluated": 91,
+      "rules_passing_threshold": 154,
+      "positive_lift_rules_count": 34,
+      "top_rules": [
+        {
+          "antecedent": "MacBook",
+          "antecedent_label": "MacBook",
+          "consequent": "External SSD & HDD",
+          "consequent_label": "External SSD & HDD",
+          "co_occurrences": 183,
+          "antecedent_count": 763,
+          "consequent_count": 1574,
+          "total_baskets": 16796,
+          "support": 0.010895,
+          "confidence": 0.239843,
+          "consequent_support": 0.093713,
+          "lift": 2.559338,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "External SSD & HDD",
+          "antecedent_label": "External SSD & HDD",
+          "consequent": "MacBook",
+          "consequent_label": "MacBook",
+          "co_occurrences": 183,
+          "antecedent_count": 1574,
+          "consequent_count": 763,
+          "total_baskets": 16796,
+          "support": 0.010895,
+          "confidence": 0.116264,
+          "consequent_support": 0.045427,
+          "lift": 2.559338,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "External SSD & HDD",
+          "antecedent_label": "External SSD & HDD",
+          "consequent": "Windows Laptop",
+          "consequent_label": "Windows Laptop",
+          "co_occurrences": 700,
+          "antecedent_count": 1574,
+          "consequent_count": 2955,
+          "total_baskets": 16796,
+          "support": 0.041677,
+          "confidence": 0.444727,
+          "consequent_support": 0.175935,
+          "lift": 2.527794,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Windows Laptop",
+          "antecedent_label": "Windows Laptop",
+          "consequent": "External SSD & HDD",
+          "consequent_label": "External SSD & HDD",
+          "co_occurrences": 700,
+          "antecedent_count": 2955,
+          "consequent_count": 1574,
+          "total_baskets": 16796,
+          "support": 0.041677,
+          "confidence": 0.236887,
+          "consequent_support": 0.093713,
+          "lift": 2.527794,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Keyboard & Mouse",
+          "antecedent_label": "Keyboard & Mouse",
+          "consequent": "Windows Laptop",
+          "consequent_label": "Windows Laptop",
+          "co_occurrences": 877,
+          "antecedent_count": 2561,
+          "consequent_count": 2955,
+          "total_baskets": 16796,
+          "support": 0.052215,
+          "confidence": 0.342444,
+          "consequent_support": 0.175935,
+          "lift": 1.946428,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Windows Laptop",
+          "antecedent_label": "Windows Laptop",
+          "consequent": "Keyboard & Mouse",
+          "consequent_label": "Keyboard & Mouse",
+          "co_occurrences": 877,
+          "antecedent_count": 2955,
+          "consequent_count": 2561,
+          "total_baskets": 16796,
+          "support": 0.052215,
+          "confidence": 0.296785,
+          "consequent_support": 0.152477,
+          "lift": 1.946428,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "MacBook",
+          "antecedent_label": "MacBook",
+          "consequent": "Keyboard & Mouse",
+          "consequent_label": "Keyboard & Mouse",
+          "co_occurrences": 212,
+          "antecedent_count": 763,
+          "consequent_count": 2561,
+          "total_baskets": 16796,
+          "support": 0.012622,
+          "confidence": 0.277851,
+          "consequent_support": 0.152477,
+          "lift": 1.822249,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Keyboard & Mouse",
+          "antecedent_label": "Keyboard & Mouse",
+          "consequent": "MacBook",
+          "consequent_label": "MacBook",
+          "co_occurrences": 212,
+          "antecedent_count": 2561,
+          "consequent_count": 763,
+          "total_baskets": 16796,
+          "support": 0.012622,
+          "confidence": 0.08278,
+          "consequent_support": 0.045427,
+          "lift": 1.822249,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "External SSD & HDD",
+          "antecedent_label": "External SSD & HDD",
+          "consequent": "Keyboard & Mouse",
+          "consequent_label": "Keyboard & Mouse",
+          "co_occurrences": 407,
+          "antecedent_count": 1574,
+          "consequent_count": 2561,
+          "total_baskets": 16796,
+          "support": 0.024232,
+          "confidence": 0.258577,
+          "consequent_support": 0.152477,
+          "lift": 1.695844,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Keyboard & Mouse",
+          "antecedent_label": "Keyboard & Mouse",
+          "consequent": "External SSD & HDD",
+          "consequent_label": "External SSD & HDD",
+          "co_occurrences": 407,
+          "antecedent_count": 2561,
+          "consequent_count": 1574,
+          "total_baskets": 16796,
+          "support": 0.024232,
+          "confidence": 0.158922,
+          "consequent_support": 0.093713,
+          "lift": 1.695844,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Android Tablet",
+          "antecedent_label": "Android Tablet",
+          "consequent": "Phone Case & Screen Protector",
+          "consequent_label": "Phone Case & Screen Protector",
+          "co_occurrences": 232,
+          "antecedent_count": 727,
+          "consequent_count": 3755,
+          "total_baskets": 16796,
+          "support": 0.013813,
+          "confidence": 0.31912,
+          "consequent_support": 0.223565,
+          "lift": 1.427413,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Phone Case & Screen Protector",
+          "antecedent_label": "Phone Case & Screen Protector",
+          "consequent": "Android Tablet",
+          "consequent_label": "Android Tablet",
+          "co_occurrences": 232,
+          "antecedent_count": 3755,
+          "consequent_count": 727,
+          "total_baskets": 16796,
+          "support": 0.013813,
+          "confidence": 0.061784,
+          "consequent_support": 0.043284,
+          "lift": 1.427413,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "iPad",
+          "antecedent_label": "iPad",
+          "consequent": "Phone Case & Screen Protector",
+          "consequent_label": "Phone Case & Screen Protector",
+          "co_occurrences": 373,
+          "antecedent_count": 1197,
+          "consequent_count": 3755,
+          "total_baskets": 16796,
+          "support": 0.022208,
+          "confidence": 0.311612,
+          "consequent_support": 0.223565,
+          "lift": 1.393833,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Phone Case & Screen Protector",
+          "antecedent_label": "Phone Case & Screen Protector",
+          "consequent": "iPad",
+          "consequent_label": "iPad",
+          "co_occurrences": 373,
+          "antecedent_count": 3755,
+          "consequent_count": 1197,
+          "total_baskets": 16796,
+          "support": 0.022208,
+          "confidence": 0.099334,
+          "consequent_support": 0.071267,
+          "lift": 1.393833,
+          "is_positive_lift": 1
+        },
+        {
+          "antecedent": "Earphones & Headphones",
+          "antecedent_label": "Earphones & Headphones",
+          "consequent": "Android Phone",
+          "consequent_label": "Android Phone",
+          "co_occurrences": 785,
+          "antecedent_count": 2898,
+          "consequent_count": 3274,
+          "total_baskets": 16796,
+          "support": 0.046737,
+          "confidence": 0.270876,
+          "consequent_support": 0.194927,
+          "lift": 1.389628,
+          "is_positive_lift": 1
+        }
+      ],
+      "popularity_trap_examples": [
+        {
+          "antecedent": "Android Phone",
+          "antecedent_label": "Android Phone",
+          "consequent": "Charger & Cable",
+          "consequent_label": "Charger & Cable",
+          "co_occurrences": 906,
+          "antecedent_count": 3274,
+          "consequent_count": 4653,
+          "total_baskets": 16796,
+          "support": 0.053941,
+          "confidence": 0.276726,
+          "consequent_support": 0.27703,
+          "lift": 0.998901,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "Network Switch",
+          "antecedent_label": "Network Switch",
+          "consequent": "Charger & Cable",
+          "consequent_label": "Charger & Cable",
+          "co_occurrences": 77,
+          "antecedent_count": 327,
+          "consequent_count": 4653,
+          "total_baskets": 16796,
+          "support": 0.004584,
+          "confidence": 0.235474,
+          "consequent_support": 0.27703,
+          "lift": 0.849994,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "Earphones & Headphones",
+          "antecedent_label": "Earphones & Headphones",
+          "consequent": "Charger & Cable",
+          "consequent_label": "Charger & Cable",
+          "co_occurrences": 599,
+          "antecedent_count": 2898,
+          "consequent_count": 4653,
+          "total_baskets": 16796,
+          "support": 0.035663,
+          "confidence": 0.206694,
+          "consequent_support": 0.27703,
+          "lift": 0.746107,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "WiFi Router",
+          "antecedent_label": "WiFi Router",
+          "consequent": "Charger & Cable",
+          "consequent_label": "Charger & Cable",
+          "co_occurrences": 148,
+          "antecedent_count": 731,
+          "consequent_count": 4653,
+          "total_baskets": 16796,
+          "support": 0.008812,
+          "confidence": 0.202462,
+          "consequent_support": 0.27703,
+          "lift": 0.730831,
+          "is_positive_lift": 0
+        },
+        {
+          "antecedent": "Phone Case & Screen Protector",
+          "antecedent_label": "Phone Case & Screen Protector",
+          "consequent": "Charger & Cable",
+          "consequent_label": "Charger & Cable",
+          "co_occurrences": 741,
+          "antecedent_count": 3755,
+          "consequent_count": 4653,
+          "total_baskets": 16796,
+          "support": 0.044118,
+          "confidence": 0.197337,
+          "consequent_support": 0.27703,
+          "lift": 0.71233,
+          "is_positive_lift": 0
+        }
+      ]
+    }
+  },
+  "module_2_rfm_kmeans": {
+    "duration_ms": 2585.47,
+    "snapshot_date": "2025-01-01",
+    "customers_clustered": 4838,
+    "seed": 42,
+    "silhouette_method": "stratified_exact_n600",
+    "silhouette_sample_size": 600,
+    "scaling_diagnostics": {
+      "feature_names": [
+        "recency_days",
+        "frequency_orders",
+        "monetary_value"
+      ],
+      "raw_means": [
+        120.2974,
+        3.4717,
+        78619360.8836
+      ],
+      "raw_stds": [
+        185.2533,
+        1.8632,
+        61581320.7624
+      ],
+      "raw_variance_share_pct": [
+        0.0,
+        0.0,
+        100.0
+      ],
+      "log1p_means": [
+        3.649933,
+        1.405659,
+        17.7128
+      ],
+      "log1p_stds": [
+        1.592632,
+        0.439313,
+        1.258785
+      ],
+      "scaled_means": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "scaled_stds": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "scaled_variance_share_pct": [
+        33.3333,
+        33.3333,
+        33.3333
+      ]
+    },
+    "k_evaluations": [
+      {
+        "k": 3,
+        "silhouette_score": 0.3594,
+        "wcss": 6431.28,
+        "iterations": 15,
+        "cluster_sizes": [
+          2773,
+          358,
+          1707
+        ]
+      },
+      {
+        "k": 4,
+        "silhouette_score": 0.3276,
+        "wcss": 4959.46,
+        "iterations": 16,
+        "cluster_sizes": [
+          1261,
+          1122,
+          299,
+          2156
+        ]
+      },
+      {
+        "k": 5,
+        "silhouette_score": 0.3088,
+        "wcss": 3924.12,
+        "iterations": 29,
+        "cluster_sizes": [
+          832,
+          1316,
+          285,
+          1381,
+          1024
+        ]
+      },
+      {
+        "k": 6,
+        "silhouette_score": 0.2849,
+        "wcss": 3473.73,
+        "iterations": 64,
+        "cluster_sizes": [
+          1015,
+          732,
+          1033,
+          276,
+          953,
+          829
+        ]
+      }
+    ],
+    "selected_k": 3,
+    "selected_silhouette_score": 0.3594,
+    "selected_wcss": 6431.28,
+    "cluster_profiles": [
+      {
+        "cluster_id": 0,
+        "customer_count": 2773,
+        "customer_share_pct": 57.32,
+        "avg_recency_days": 31.2,
+        "median_recency_days": 17.0,
+        "avg_frequency_orders": 4.66,
+        "avg_monetary_vnd": 109389225.0,
+        "median_monetary_vnd": 98901116.0,
+        "total_monetary_vnd": 303336321434.0,
+        "revenue_share_pct": 79.75,
+        "centroid_z": [
+          -0.5089,
+          0.6686,
+          0.5043
+        ],
+        "cluster_label": "VIP High-Value Active"
+      },
+      {
+        "cluster_id": 1,
+        "customer_count": 1707,
+        "customer_share_pct": 35.28,
+        "avg_recency_days": 235.0,
+        "median_recency_days": 126.0,
+        "avg_frequency_orders": 1.98,
+        "avg_monetary_vnd": 44535984.0,
+        "median_monetary_vnd": 36186076.0,
+        "total_monetary_vnd": 76022924950.0,
+        "revenue_share_pct": 19.99,
+        "centroid_z": [
+          0.6947,
+          -0.8092,
+          -0.2538
+        ],
+        "cluster_label": "Dormant Mid-Value Lapsed"
+      },
+      {
+        "cluster_id": 2,
+        "customer_count": 358,
+        "customer_share_pct": 7.4,
+        "avg_recency_days": 263.6,
+        "median_recency_days": 136.5,
+        "avg_frequency_orders": 1.34,
+        "avg_monetary_vnd": 2796708.0,
+        "median_monetary_vnd": 1806334.0,
+        "total_monetary_vnd": 1001221571.0,
+        "revenue_share_pct": 0.26,
+        "centroid_z": [
+          0.6295,
+          -1.3205,
+          -2.6961
+        ],
+        "cluster_label": "Churned Low-Spend One-Time"
+      }
+    ],
+    "rfm_contingency_matrix": {
+      "C0: VIP High-Value Active": {
+        "At-risk": 506,
+        "Champions": 754,
+        "Churned": 8,
+        "Loyal": 1256,
+        "Regular": 249
+      },
+      "C1: Dormant Mid-Value Lapsed": {
+        "At-risk": 329,
+        "Churned": 869,
+        "Loyal": 41,
+        "Regular": 468
+      },
+      "C2: Churned Low-Spend One-Time": {
+        "At-risk": 8,
+        "Churned": 216,
+        "Loyal": 8,
+        "Regular": 126
+      }
+    },
+    "rfm_alignment_purity": 0.4839,
+    "rfm_alignment_nmi": 0.3369
+  },
+  "module_3_return_risk": {
+    "duration_ms": 1358.69,
+    "model_version": "logreg_l2_balanced_v1_pure_stdlib",
+    "split_metadata": {
+      "split_date": "2024-01-01",
+      "train_count": 5265,
+      "train_positives": 360,
+      "train_raw_positives": 386,
+      "train_right_censored_returns_at_cutoff": 26,
+      "train_prevalence": 0.068376,
+      "train_min_date": "2023-01-06 09:28:03",
+      "train_max_date": "2023-12-31 22:52:38",
+      "test_count": 12819,
+      "test_positives": 902,
+      "test_prevalence": 0.070364,
+      "test_min_date": "2024-01-01 07:24:57",
+      "test_max_date": "2024-12-31 22:49:38",
+      "strict_temporal_separation": true,
+      "prior_return_future_peeks_blocked": 4,
+      "prior_non_terminal_orders_in_history": 1692,
+      "scored_population_definition": "Post-fulfillment conditional return-risk scoring over Completed + Returned orders; customer_prior_orders_log aggregates all prior non-cancelled orders (Pending/Processing/Shipped/Completed/Returned) placed strictly before current.order_date.",
+      "score_calibration_note": "predicted_risk_score is a class-balanced propensity score (not raw calibrated probability) intended for decile ranking and Top-K% operational prioritization.",
+      "feature_names": [
+        "log1p_net_amount",
+        "discount_ratio",
+        "item_count",
+        "avg_item_price_log",
+        "is_online_channel",
+        "is_app_channel",
+        "is_weekend_order",
+        "is_tet_season",
+        "has_smartphone",
+        "has_laptop",
+        "has_accessories",
+        "customer_prior_orders_log",
+        "customer_prior_return_rate"
+      ],
+      "excluded_post_order_columns": [
+        "ship_date",
+        "ship_date_key",
+        "returned_at",
+        "returned_date",
+        "returned_date_key",
+        "return_lead_days",
+        "reason",
+        "updated_at",
+        "is_missing_online_ship_date",
+        "is_temporal_anomaly"
+      ]
+    },
+    "training_diagnostics": {
+      "l2_lambda": 1.0,
+      "learning_rate": 0.25,
+      "epochs": 120,
+      "class_weight_pos": 7.3125,
+      "class_weight_neg": 0.5367,
+      "bias": -0.019883,
+      "initial_loss": 0.693147,
+      "final_loss": 0.687682,
+      "train_roc_auc": 0.551249,
+      "train_pr_auc": 0.080434
+    },
+    "out_of_time_2024_metrics": {
+      "scored_orders": 12819,
+      "actual_returns": 902,
+      "naive_baseline_prevalence": 0.070364,
+      "roc_auc": 0.498646,
+      "pr_auc": 0.070673,
+      "pr_auc_vs_naive_ratio": 1.0044,
+      "precision_at_top10_pct": 0.069423,
+      "recall_at_top10_pct": 0.09867,
+      "lift_at_top10_pct": 0.9866,
+      "top10_detail": {
+        "top_fraction": 0.1,
+        "top_k_orders": 1282,
+        "captured_returns": 89,
+        "total_returns": 902,
+        "prevalence": 0.070364,
+        "precision_at_k": 0.069423,
+        "recall_at_k": 0.09867,
+        "lift_at_k": 0.9866,
+        "score_cutoff": 0.571135
+      }
+    },
+    "decile_lift_table": [
+      {
+        "decile": 1,
+        "orders": 1282,
+        "actual_returns": 89,
+        "return_rate_pct": 6.94,
+        "lift_vs_baseline": 0.9866,
+        "avg_predicted_score": 0.5864
+      },
+      {
+        "decile": 2,
+        "orders": 1282,
+        "actual_returns": 90,
+        "return_rate_pct": 7.02,
+        "lift_vs_baseline": 0.9977,
+        "avg_predicted_score": 0.5628
+      },
+      {
+        "decile": 3,
+        "orders": 1282,
+        "actual_returns": 96,
+        "return_rate_pct": 7.49,
+        "lift_vs_baseline": 1.0642,
+        "avg_predicted_score": 0.5486
+      },
+      {
+        "decile": 4,
+        "orders": 1282,
+        "actual_returns": 78,
+        "return_rate_pct": 6.08,
+        "lift_vs_baseline": 0.8647,
+        "avg_predicted_score": 0.5368
+      },
+      {
+        "decile": 5,
+        "orders": 1282,
+        "actual_returns": 97,
+        "return_rate_pct": 7.57,
+        "lift_vs_baseline": 1.0753,
+        "avg_predicted_score": 0.5248
+      },
+      {
+        "decile": 6,
+        "orders": 1282,
+        "actual_returns": 88,
+        "return_rate_pct": 6.86,
+        "lift_vs_baseline": 0.9755,
+        "avg_predicted_score": 0.5117
+      },
+      {
+        "decile": 7,
+        "orders": 1282,
+        "actual_returns": 83,
+        "return_rate_pct": 6.47,
+        "lift_vs_baseline": 0.9201,
+        "avg_predicted_score": 0.4969
+      },
+      {
+        "decile": 8,
+        "orders": 1282,
+        "actual_returns": 108,
+        "return_rate_pct": 8.42,
+        "lift_vs_baseline": 1.1972,
+        "avg_predicted_score": 0.4773
+      },
+      {
+        "decile": 9,
+        "orders": 1282,
+        "actual_returns": 89,
+        "return_rate_pct": 6.94,
+        "lift_vs_baseline": 0.9866,
+        "avg_predicted_score": 0.4465
+      },
+      {
+        "decile": 10,
+        "orders": 1281,
+        "actual_returns": 84,
+        "return_rate_pct": 6.56,
+        "lift_vs_baseline": 0.9319,
+        "avg_predicted_score": 0.3758
+      }
+    ],
+    "feature_weights": [
+      {
+        "feature": "discount_ratio",
+        "standardized_weight": -0.207205,
+        "abs_weight": 0.207205,
+        "odds_ratio_per_1sd": 0.8129,
+        "train_mean": 0.040296,
+        "train_std": 0.035036
+      },
+      {
+        "feature": "avg_item_price_log",
+        "standardized_weight": -0.074497,
+        "abs_weight": 0.074497,
+        "odds_ratio_per_1sd": 0.9282,
+        "train_mean": 15.382056,
+        "train_std": 1.427612
+      },
+      {
+        "feature": "has_laptop",
+        "standardized_weight": 0.064146,
+        "abs_weight": 0.064146,
+        "odds_ratio_per_1sd": 1.0662,
+        "train_mean": 0.215954,
+        "train_std": 0.411483
+      },
+      {
+        "feature": "is_weekend_order",
+        "standardized_weight": -0.059169,
+        "abs_weight": 0.059169,
+        "odds_ratio_per_1sd": 0.9425,
+        "train_mean": 0.279772,
+        "train_std": 0.448887
+      },
+      {
+        "feature": "customer_prior_orders_log",
+        "standardized_weight": 0.049629,
+        "abs_weight": 0.049629,
+        "odds_ratio_per_1sd": 1.0509,
+        "train_mean": 0.435987,
+        "train_std": 0.472582
+      },
+      {
+        "feature": "is_app_channel",
+        "standardized_weight": 0.042016,
+        "abs_weight": 0.042016,
+        "odds_ratio_per_1sd": 1.0429,
+        "train_mean": 0.298386,
+        "train_std": 0.45755
+      },
+      {
+        "feature": "item_count",
+        "standardized_weight": 0.036493,
+        "abs_weight": 0.036493,
+        "odds_ratio_per_1sd": 1.0372,
+        "train_mean": 2.569041,
+        "train_std": 1.508643
+      },
+      {
+        "feature": "log1p_net_amount",
+        "standardized_weight": -0.034066,
+        "abs_weight": 0.034066,
+        "odds_ratio_per_1sd": 0.9665,
+        "train_mean": 16.110042,
+        "train_std": 1.651067
+      },
+      {
+        "feature": "has_accessories",
+        "standardized_weight": 0.030841,
+        "abs_weight": 0.030841,
+        "odds_ratio_per_1sd": 1.0313,
+        "train_mean": 0.68433,
+        "train_std": 0.464782
+      },
+      {
+        "feature": "customer_prior_return_rate",
+        "standardized_weight": -0.015068,
+        "abs_weight": 0.015068,
+        "odds_ratio_per_1sd": 0.985,
+        "train_mean": 0.030358,
+        "train_std": 0.151264
+      },
+      {
+        "feature": "has_smartphone",
+        "standardized_weight": 0.011088,
+        "abs_weight": 0.011088,
+        "odds_ratio_per_1sd": 1.0111,
+        "train_mean": 0.356315,
+        "train_std": 0.47891
+      },
+      {
+        "feature": "is_online_channel",
+        "standardized_weight": -0.009631,
+        "abs_weight": 0.009631,
+        "odds_ratio_per_1sd": 0.9904,
+        "train_mean": 0.697816,
+        "train_std": 0.459205
+      },
+      {
+        "feature": "is_tet_season",
+        "standardized_weight": 0.008233,
+        "abs_weight": 0.008233,
+        "odds_ratio_per_1sd": 1.0083,
+        "train_mean": 0.051472,
+        "train_std": 0.220958
+      }
+    ],
+    "honest_signal_assessment": "Near-baseline out-of-time generalization (expected on this synthetic dataset): in `data/raw/generate_data.py`, `pick_status()` draws order status independently from fixed probabilities (`Completed=0.78`, `Returned=0.06`, with only a minor year-end ship-date boundary clamp). Under strict leakage-free 2023->2024 validation, ROC-AUC near ~0.50 and PR-AUC near baseline prevalence (~0.070) proves the pipeline does NOT leak target/post-order information and honestly diagnoses absent operational signal rather than overfitting noise."
+  }
+}
