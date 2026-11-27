@@ -17,6 +17,7 @@ config/.env.*
 !.env.example
 !config/.env.example
 config/*.json
+!config/data_contracts.json
 *.service-account.json
 *service-account*.json
 *credentials*.json
