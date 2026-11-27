@@ -7,12 +7,14 @@ for a multi-channel technology retail company in Vietnam.
 Supports: RFM segmentation, BI dashboards, BigQuery / Power BI / Looker
 """
 
+import argparse
 import random
 import math
 import csv
 import os
 from datetime import datetime, date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -22,8 +24,18 @@ SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
 
-# ── Output directory ─────────────────────────────────────────────────────────
-OUT_DIR = "C:/Users/ADMIN/Documents/dataset"
+# ── Output directory (portable CLI / env default to script directory) ────────
+def _resolve_out_dir() -> str:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        "--out-dir",
+        default=os.getenv("RAW_DATA_DIR", str(Path(__file__).resolve().parent)),
+    )
+    args, _ = parser.parse_known_args()
+    return str(Path(args.out_dir).resolve())
+
+
+OUT_DIR = _resolve_out_dir()
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ── Date constants ────────────────────────────────────────────────────────────

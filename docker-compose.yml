@@ -1,0 +1,11 @@
+services:
+  warehouse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: viettech-bi-warehouse
+    volumes:
+      - ./benchmarks:/app/benchmarks
+      - ./data/warehouse:/app/data/warehouse
+    environment:
+      - PYTHONUNBUFFERED=1

@@ -1,0 +1,37 @@
+name: VietTech BI Warehouse CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  verify-warehouse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Syntax check Python scripts
+        run: |
+          python -m py_compile scripts/etl_csv_to_bq.py scripts/run_sql_pipeline.py data/raw/generate_data.py
+
+      - name: BigQuery SQL dry-run render check (full & incremental)
+        run: |
+          python scripts/run_sql_pipeline.py --dry-run
+          python scripts/run_sql_pipeline.py --dry-run --mode incremental --watermark "2024-12-02 00:00:00"
+          python scripts/etl_csv_to_bq.py --dry-run
+
+      - name: Run local SQLite warehouse (full + benchmark)
+        run: |
+          python scripts/run_local_warehouse.py --mode full --benchmark
+
+      - name: Run automated warehouse test suite
+        run: |
+          python -m unittest discover -s tests -v
