@@ -1,0 +1,733 @@
+{
+  "contract_version": "1.0.0",
+  "schema_standard": "viettech-bi-data-contract-v1",
+  "dataset_name": "viettech_retail_oltp_raw_snapshots",
+  "owner": "VietTech Data Engineering & BI Governance Team",
+  "sla": {
+    "delivery_cadence": "daily",
+    "freshness_cutoff_ict": "06:00:00+07:00",
+    "encoding": "utf-8",
+    "strip_utf8_bom": true,
+    "delimiter": ",",
+    "max_critical_errors": 0,
+    "quarantine_retention_days": 90
+  },
+  "compliance": {
+    "regulation": "Vietnam Personal Data Protection Law (Luat Bao ve du lieu ca nhan so 91/2025/QH15)",
+    "effective_date": "2026-01-01",
+    "privacy_architecture": "Zone A (raw/stg/pii_vault) retains restricted PII under IAM; Zone B (retailbi_mart) strips all direct PII and quasi-identifiers and uses deterministic SHA-256 pseudonymized keys.",
+    "pii_taxonomy": {
+      "NONE": "Non-personal operational or catalog attribute.",
+      "INTERNAL": "Internal business or financial attribute with no direct personal identification.",
+      "PSEUDONYMIZED": "Deterministic pseudonymized identifier or coarse analytical attribute allowed in mart.",
+      "PII_RESTRICTED": "Direct PII or sensitive quasi-identifier restricted to Zone A (raw/stg/pii_vault) and prohibited from Zone B (retailbi_mart) under PDPL 91/2025/QH15."
+    },
+    "mart_prohibited_pii_columns": [
+      "first_name",
+      "last_name",
+      "full_name",
+      "email",
+      "phone",
+      "date_of_birth"
+    ],
+    "dim_customer_allowed_columns": [
+      "customer_key",
+      "customer_id",
+      "customer_code",
+      "customer_name_masked",
+      "gender",
+      "city",
+      "country",
+      "segment",
+      "registered_date",
+      "is_active"
+    ]
+  },
+  "tables": {
+    "sales_channels": {
+      "file_name": "sales_channels.csv",
+      "staging_table": "stg_sales_channels",
+      "description": "Omnichannel sales outlets (6 physical retail stores + Web + App).",
+      "owner": "Retail Operations & Channel Engineering",
+      "pii_classification": "NONE",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["channel_code"]],
+      "baseline_row_count": 8,
+      "expected_row_count_range": [5, 50],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "channel_code",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "channel_name",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "channel_type",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["Physical", "Web", "App"],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "is_active",
+          "type": "bool_int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["0", "1"],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "opened_date",
+          "type": "date",
+          "nullable": true,
+          "max_null_ratio": 0.25,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "product_categories": {
+      "file_name": "product_categories.csv",
+      "staging_table": "stg_product_categories",
+      "description": "Two-level electronics product category and sub-category hierarchy.",
+      "owner": "Merchandising & Catalog Engineering",
+      "pii_classification": "NONE",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["category", "sub_category"]],
+      "baseline_row_count": 14,
+      "expected_row_count_range": [10, 100],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "sub_category",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "products": {
+      "file_name": "products.csv",
+      "staging_table": "stg_products",
+      "description": "Current electronics SKU master catalog with cost, MSRP, and inventory levels.",
+      "owner": "Merchandising & Catalog Engineering",
+      "pii_classification": "INTERNAL",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["product_code"]],
+      "baseline_row_count": 47,
+      "expected_row_count_range": [30, 500],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "product_code",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "product_name",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "category_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "brand",
+          "type": "string",
+          "nullable": true,
+          "max_null_ratio": 0.05,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "cost_price",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "msrp",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "quantity_in_stock",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "is_active",
+          "type": "bool_int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["0", "1"],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "customers": {
+      "file_name": "customers.csv",
+      "staging_table": "stg_customers",
+      "description": "Operational customer master containing PDPL 91/2025/QH15 restricted PII segregated at the staging-to-mart trust boundary.",
+      "owner": "CRM & Privacy Governance (DPO)",
+      "pii_classification": "PII_RESTRICTED",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["customer_code"], ["email"]],
+      "baseline_row_count": 5000,
+      "expected_row_count_range": [4000, 100000],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "customer_code",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "first_name",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "PII_RESTRICTED"
+        },
+        {
+          "name": "last_name",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "PII_RESTRICTED"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "nullable": true,
+          "max_null_ratio": 0.05,
+          "pii_classification": "PII_RESTRICTED"
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "nullable": true,
+          "max_null_ratio": 0.05,
+          "pii_classification": "PII_RESTRICTED"
+        },
+        {
+          "name": "gender",
+          "type": "string",
+          "nullable": true,
+          "max_null_ratio": 0.05,
+          "allowed_values": ["Male", "Female", "Other"],
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "date",
+          "nullable": true,
+          "max_null_ratio": 0.05,
+          "pii_classification": "PII_RESTRICTED"
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "segment",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["Consumer", "Corporate", "Home Office"],
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "registered_date",
+          "type": "date",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "is_active",
+          "type": "bool_int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["0", "1"],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "orders": {
+      "file_name": "orders.csv",
+      "staging_table": "stg_orders",
+      "description": "Omnichannel sales order headers with lifecycle status, payment method, and VND financial totals.",
+      "owner": "Order Management & Finance Engineering",
+      "pii_classification": "INTERNAL",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["order_code"]],
+      "baseline_row_count": 21435,
+      "expected_row_count_range": [15000, 200000],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "order_code",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "customer_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "PSEUDONYMIZED"
+        },
+        {
+          "name": "channel_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "order_date",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "ship_date",
+          "type": "date",
+          "nullable": true,
+          "max_null_ratio": 0.2,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": [
+            "Pending",
+            "Processing",
+            "Shipped",
+            "Completed",
+            "Cancelled",
+            "Returned"
+          ],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "payment_method",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": [
+            "Cash",
+            "Credit Card",
+            "Bank Transfer",
+            "E-Wallet"
+          ],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "total_amount",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "total_discount",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "net_amount",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "total_cost",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "note",
+          "type": "string",
+          "nullable": true,
+          "max_null_ratio": 1.0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "order_details": {
+      "file_name": "order_details.csv",
+      "staging_table": "stg_order_details",
+      "description": "Line-item order details containing quantities, unit prices/costs, discounts, and line profit.",
+      "owner": "Order Management & Finance Engineering",
+      "pii_classification": "INTERNAL",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["order_id", "product_id"]],
+      "baseline_row_count": 39548,
+      "expected_row_count_range": [25000, 500000],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "order_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "product_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "quantity",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "unit_price",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "unit_cost",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "discount_rate",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "max_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "discount_amount",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "line_total",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "line_cost",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "line_profit",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    },
+    "order_returns": {
+      "file_name": "order_returns.csv",
+      "staging_table": "stg_order_returns",
+      "description": "Customer return events joined 1:1 to returned orders.",
+      "owner": "Reverse Logistics & Order Operations",
+      "pii_classification": "INTERNAL",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"], ["order_id"]],
+      "baseline_row_count": 1288,
+      "expected_row_count_range": [500, 20000],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "order_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "reason",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "returned_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "INTERNAL"
+        }
+      ]
+    },
+    "product_price_history": {
+      "file_name": "product_price_history.csv",
+      "staging_table": "stg_product_price_history",
+      "description": "Historical MSRP and COST price revision ledger driving dim_product_scd2.",
+      "owner": "Merchandising & Pricing Governance",
+      "pii_classification": "INTERNAL",
+      "strict_column_order": true,
+      "primary_key": ["id"],
+      "unique_keys": [["id"]],
+      "baseline_row_count": 24,
+      "expected_row_count_range": [10, 5000],
+      "columns": [
+        {
+          "name": "id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "product_id",
+          "type": "int",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 1,
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "price_type",
+          "type": "string",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "allowed_values": ["MSRP", "COST"],
+          "pii_classification": "NONE"
+        },
+        {
+          "name": "old_price",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "new_price",
+          "type": "decimal",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "min_value": 0,
+          "pii_classification": "INTERNAL"
+        },
+        {
+          "name": "changed_at",
+          "type": "timestamp",
+          "nullable": false,
+          "max_null_ratio": 0.0,
+          "pii_classification": "NONE"
+        }
+      ]
+    }
+  },
+  "cross_table_checks": [
+    {
+      "check_id": "temporal_return_after_order",
+      "description": "Pre-ingestion temporal integrity check: order_returns.returned_at must be >= orders.order_date.",
+      "left_table": "order_returns",
+      "left_join_key": "order_id",
+      "left_timestamp_col": "returned_at",
+      "right_table": "orders",
+      "right_join_key": "id",
+      "right_timestamp_col": "order_date",
+      "severity": "WARNING",
+      "error_code": "TEMPORAL_RETURN_BEFORE_ORDER",
+      "quarantine_action": "FLAG_AND_QUARANTINE_CANDIDATE",
+      "adr_reference": "ADR-004"
+    }
+  ]
+}

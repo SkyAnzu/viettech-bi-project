@@ -1,0 +1,1796 @@
+{
+  "manifest_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "generated_at": "2026-11-27T21:09:51Z",
+  "project": "viettech-bi-project",
+  "pdpl_compliance": {
+    "regulation": "Vietnam Personal Data Protection Law (Luat Bao ve du lieu ca nhan so 91/2025/QH15)",
+    "effective_date": "2026-01-01",
+    "raw_customers_pii_restricted": [
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "date_of_birth"
+    ],
+    "stg_customers_pii_restricted": [
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "date_of_birth"
+    ],
+    "dim_customer_columns": [
+      "customer_key",
+      "customer_id",
+      "customer_code",
+      "customer_name_masked",
+      "gender",
+      "city",
+      "country",
+      "segment",
+      "registered_date",
+      "is_active"
+    ],
+    "prohibited_pii_columns": [
+      "first_name",
+      "last_name",
+      "full_name",
+      "email",
+      "phone",
+      "date_of_birth"
+    ],
+    "dim_customer_pii_violations": [],
+    "compliant": true
+  },
+  "governance_control_tables": [
+    "dq_audit_results",
+    "dq_quarantine_records",
+    "etl_watermarks",
+    "etl_run_audit",
+    "retailbi_pii_vault.customer_pii_vault"
+  ],
+  "summary": {
+    "total_nodes": 38,
+    "total_edges": 70,
+    "node_counts_by_layer": {
+      "raw_csv": 8,
+      "staging": 8,
+      "dimension": 6,
+      "fact": 3,
+      "rfm_mart": 1,
+      "bi_view": 5,
+      "analytics_mining_mart": 3,
+      "bi_dashboard_page": 4
+    }
+  },
+  "nodes": [
+    {
+      "id": "raw.sales_channels",
+      "name": "sales_channels.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "channel_code",
+        "channel_name",
+        "channel_type",
+        "is_active",
+        "opened_date"
+      ],
+      "source_path": "data/raw/sales_channels.csv",
+      "owner": "Retail Operations & Channel Engineering",
+      "row_count": 8,
+      "column_pii_tags": {
+        "id": "NONE",
+        "channel_code": "NONE",
+        "channel_name": "NONE",
+        "channel_type": "NONE",
+        "is_active": "NONE",
+        "opened_date": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_sales_channels",
+      "name": "stg_sales_channels",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "channel_code",
+        "channel_name",
+        "channel_type",
+        "is_active",
+        "opened_date"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_sales_channels",
+      "column_pii_tags": {
+        "id": "NONE",
+        "channel_code": "NONE",
+        "channel_name": "NONE",
+        "channel_type": "NONE",
+        "is_active": "NONE",
+        "opened_date": "NONE"
+      }
+    },
+    {
+      "id": "raw.product_categories",
+      "name": "product_categories.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "category",
+        "sub_category"
+      ],
+      "source_path": "data/raw/product_categories.csv",
+      "owner": "Merchandising & Catalog Engineering",
+      "row_count": 14,
+      "column_pii_tags": {
+        "id": "NONE",
+        "category": "NONE",
+        "sub_category": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_product_categories",
+      "name": "stg_product_categories",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "category",
+        "sub_category"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_product_categories",
+      "column_pii_tags": {
+        "id": "NONE",
+        "category": "NONE",
+        "sub_category": "NONE"
+      }
+    },
+    {
+      "id": "raw.products",
+      "name": "products.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "product_code",
+        "product_name",
+        "category_id",
+        "brand",
+        "cost_price",
+        "msrp",
+        "quantity_in_stock",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "source_path": "data/raw/products.csv",
+      "owner": "Merchandising & Catalog Engineering",
+      "row_count": 47,
+      "column_pii_tags": {
+        "id": "NONE",
+        "product_code": "NONE",
+        "product_name": "NONE",
+        "category_id": "NONE",
+        "brand": "NONE",
+        "cost_price": "INTERNAL",
+        "msrp": "NONE",
+        "quantity_in_stock": "INTERNAL",
+        "is_active": "NONE",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_products",
+      "name": "stg_products",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "product_code",
+        "product_name",
+        "category_id",
+        "brand",
+        "cost_price",
+        "msrp",
+        "quantity_in_stock",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_products",
+      "column_pii_tags": {
+        "id": "NONE",
+        "product_code": "NONE",
+        "product_name": "NONE",
+        "category_id": "NONE",
+        "brand": "NONE",
+        "cost_price": "INTERNAL",
+        "msrp": "NONE",
+        "quantity_in_stock": "INTERNAL",
+        "is_active": "NONE",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "raw.customers",
+      "name": "customers.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "PII_RESTRICTED",
+      "pii_restricted_columns": [
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "date_of_birth"
+      ],
+      "columns": [
+        "id",
+        "customer_code",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "gender",
+        "date_of_birth",
+        "city",
+        "country",
+        "segment",
+        "registered_date",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "source_path": "data/raw/customers.csv",
+      "owner": "CRM & Privacy Governance (DPO)",
+      "row_count": 5000,
+      "column_pii_tags": {
+        "id": "PSEUDONYMIZED",
+        "customer_code": "PSEUDONYMIZED",
+        "first_name": "PII_RESTRICTED",
+        "last_name": "PII_RESTRICTED",
+        "email": "PII_RESTRICTED",
+        "phone": "PII_RESTRICTED",
+        "gender": "PSEUDONYMIZED",
+        "date_of_birth": "PII_RESTRICTED",
+        "city": "PSEUDONYMIZED",
+        "country": "NONE",
+        "segment": "PSEUDONYMIZED",
+        "registered_date": "PSEUDONYMIZED",
+        "is_active": "NONE",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_customers",
+      "name": "stg_customers",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "PII_RESTRICTED",
+      "pii_restricted_columns": [
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "date_of_birth"
+      ],
+      "columns": [
+        "id",
+        "customer_code",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "gender",
+        "date_of_birth",
+        "city",
+        "country",
+        "segment",
+        "registered_date",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_customers",
+      "column_pii_tags": {
+        "id": "PSEUDONYMIZED",
+        "customer_code": "PSEUDONYMIZED",
+        "first_name": "PII_RESTRICTED",
+        "last_name": "PII_RESTRICTED",
+        "email": "PII_RESTRICTED",
+        "phone": "PII_RESTRICTED",
+        "gender": "PSEUDONYMIZED",
+        "date_of_birth": "PII_RESTRICTED",
+        "city": "PSEUDONYMIZED",
+        "country": "NONE",
+        "segment": "PSEUDONYMIZED",
+        "registered_date": "PSEUDONYMIZED",
+        "is_active": "NONE",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "raw.orders",
+      "name": "orders.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_code",
+        "customer_id",
+        "channel_id",
+        "order_date",
+        "ship_date",
+        "status",
+        "payment_method",
+        "total_amount",
+        "total_discount",
+        "net_amount",
+        "total_cost",
+        "note",
+        "created_at",
+        "updated_at"
+      ],
+      "source_path": "data/raw/orders.csv",
+      "owner": "Order Management & Finance Engineering",
+      "row_count": 21435,
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_code": "INTERNAL",
+        "customer_id": "PSEUDONYMIZED",
+        "channel_id": "NONE",
+        "order_date": "INTERNAL",
+        "ship_date": "INTERNAL",
+        "status": "NONE",
+        "payment_method": "NONE",
+        "total_amount": "INTERNAL",
+        "total_discount": "INTERNAL",
+        "net_amount": "INTERNAL",
+        "total_cost": "INTERNAL",
+        "note": "INTERNAL",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_orders",
+      "name": "stg_orders",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_code",
+        "customer_id",
+        "channel_id",
+        "order_date",
+        "ship_date",
+        "status",
+        "payment_method",
+        "total_amount",
+        "total_discount",
+        "net_amount",
+        "total_cost",
+        "note",
+        "created_at",
+        "updated_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_orders",
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_code": "INTERNAL",
+        "customer_id": "PSEUDONYMIZED",
+        "channel_id": "NONE",
+        "order_date": "INTERNAL",
+        "ship_date": "INTERNAL",
+        "status": "NONE",
+        "payment_method": "NONE",
+        "total_amount": "INTERNAL",
+        "total_discount": "INTERNAL",
+        "net_amount": "INTERNAL",
+        "total_cost": "INTERNAL",
+        "note": "INTERNAL",
+        "created_at": "NONE",
+        "updated_at": "NONE"
+      }
+    },
+    {
+      "id": "raw.order_details",
+      "name": "order_details.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_id",
+        "product_id",
+        "quantity",
+        "unit_price",
+        "unit_cost",
+        "discount_rate",
+        "discount_amount",
+        "line_total",
+        "line_cost",
+        "line_profit",
+        "created_at"
+      ],
+      "source_path": "data/raw/order_details.csv",
+      "owner": "Order Management & Finance Engineering",
+      "row_count": 39548,
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_id": "INTERNAL",
+        "product_id": "NONE",
+        "quantity": "NONE",
+        "unit_price": "INTERNAL",
+        "unit_cost": "INTERNAL",
+        "discount_rate": "INTERNAL",
+        "discount_amount": "INTERNAL",
+        "line_total": "INTERNAL",
+        "line_cost": "INTERNAL",
+        "line_profit": "INTERNAL",
+        "created_at": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_order_details",
+      "name": "stg_order_details",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_id",
+        "product_id",
+        "quantity",
+        "unit_price",
+        "unit_cost",
+        "discount_rate",
+        "discount_amount",
+        "line_total",
+        "line_cost",
+        "line_profit",
+        "created_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_order_details",
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_id": "INTERNAL",
+        "product_id": "NONE",
+        "quantity": "NONE",
+        "unit_price": "INTERNAL",
+        "unit_cost": "INTERNAL",
+        "discount_rate": "INTERNAL",
+        "discount_amount": "INTERNAL",
+        "line_total": "INTERNAL",
+        "line_cost": "INTERNAL",
+        "line_profit": "INTERNAL",
+        "created_at": "NONE"
+      }
+    },
+    {
+      "id": "raw.order_returns",
+      "name": "order_returns.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_id",
+        "reason",
+        "returned_at"
+      ],
+      "source_path": "data/raw/order_returns.csv",
+      "owner": "Reverse Logistics & Order Operations",
+      "row_count": 1288,
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_id": "INTERNAL",
+        "reason": "NONE",
+        "returned_at": "INTERNAL"
+      }
+    },
+    {
+      "id": "stg.stg_order_returns",
+      "name": "stg_order_returns",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "order_id",
+        "reason",
+        "returned_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_order_returns",
+      "column_pii_tags": {
+        "id": "INTERNAL",
+        "order_id": "INTERNAL",
+        "reason": "NONE",
+        "returned_at": "INTERNAL"
+      }
+    },
+    {
+      "id": "raw.product_price_history",
+      "name": "product_price_history.csv",
+      "layer": "raw_csv",
+      "asset_type": "csv_snapshot",
+      "trust_zone": "Zone A - Restricted Ingestion",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "product_id",
+        "price_type",
+        "old_price",
+        "new_price",
+        "changed_at"
+      ],
+      "source_path": "data/raw/product_price_history.csv",
+      "owner": "Merchandising & Pricing Governance",
+      "row_count": 24,
+      "column_pii_tags": {
+        "id": "NONE",
+        "product_id": "NONE",
+        "price_type": "NONE",
+        "old_price": "INTERNAL",
+        "new_price": "INTERNAL",
+        "changed_at": "NONE"
+      }
+    },
+    {
+      "id": "stg.stg_product_price_history",
+      "name": "stg_product_price_history",
+      "layer": "staging",
+      "asset_type": "staging_table",
+      "trust_zone": "Zone A - Restricted Staging",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "id",
+        "product_id",
+        "price_type",
+        "old_price",
+        "new_price",
+        "changed_at"
+      ],
+      "bigquery_dataset": "retailbi_stg",
+      "sqlite_table": "stg_product_price_history",
+      "column_pii_tags": {
+        "id": "NONE",
+        "product_id": "NONE",
+        "price_type": "NONE",
+        "old_price": "INTERNAL",
+        "new_price": "INTERNAL",
+        "changed_at": "NONE"
+      }
+    },
+    {
+      "id": "mart.dim_date",
+      "name": "dim_date",
+      "layer": "dimension",
+      "asset_type": "dimension_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "date_key",
+        "date",
+        "year",
+        "quarter",
+        "month",
+        "week_of_year",
+        "day_of_week",
+        "is_weekend",
+        "is_tet",
+        "is_year_end"
+      ],
+      "grain": "1 row per calendar day (2020-2027) + sentinel keys (-1, -2, -3)",
+      "seasonality_flags": [
+        "is_tet",
+        "is_year_end"
+      ]
+    },
+    {
+      "id": "mart.dim_customer",
+      "name": "dim_customer",
+      "layer": "dimension",
+      "asset_type": "dimension_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "PSEUDONYMIZED",
+      "pii_restricted_columns": [],
+      "columns": [
+        "customer_key",
+        "customer_id",
+        "customer_code",
+        "customer_name_masked",
+        "gender",
+        "city",
+        "country",
+        "segment",
+        "registered_date",
+        "is_active"
+      ],
+      "surrogate_key": "SHA-256('customer|' || id)",
+      "pdpl_compliance": "91/2025/QH15",
+      "prohibited_pii_columns_removed": [
+        "first_name",
+        "last_name",
+        "full_name",
+        "email",
+        "phone",
+        "date_of_birth"
+      ],
+      "pii_vault_target": "retailbi_pii_vault.customer_pii_vault"
+    },
+    {
+      "id": "mart.dim_product",
+      "name": "dim_product",
+      "layer": "dimension",
+      "asset_type": "dimension_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "product_key",
+        "product_id",
+        "product_code",
+        "product_name",
+        "category",
+        "sub_category",
+        "brand",
+        "msrp",
+        "cost_price",
+        "is_active"
+      ],
+      "scd_type": "Type 1 (current catalog state)",
+      "surrogate_key": "SHA-256('product|' || id)"
+    },
+    {
+      "id": "mart.dim_product_scd2",
+      "name": "dim_product_scd2",
+      "layer": "dimension",
+      "asset_type": "dimension_table_scd2",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "product_version_key",
+        "product_key",
+        "product_id",
+        "product_code",
+        "product_name",
+        "category",
+        "sub_category",
+        "brand",
+        "msrp",
+        "cost_price",
+        "valid_from",
+        "valid_to",
+        "is_current"
+      ],
+      "scd_type": "Type 2 (half-open [valid_from, valid_to) intervals)",
+      "baseline_versions": 71,
+      "surrogate_key": "SHA-256('product_scd2|' || product_id || '|' || valid_from)"
+    },
+    {
+      "id": "mart.dim_channel",
+      "name": "dim_channel",
+      "layer": "dimension",
+      "asset_type": "dimension_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "channel_key",
+        "channel_id",
+        "channel_code",
+        "channel_name",
+        "channel_type",
+        "is_online",
+        "is_active",
+        "opened_date"
+      ],
+      "surrogate_key": "SHA-256('channel|' || id)"
+    },
+    {
+      "id": "mart.dim_payment",
+      "name": "dim_payment",
+      "layer": "dimension",
+      "asset_type": "dimension_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "columns": [
+        "payment_key",
+        "payment_method",
+        "payment_category"
+      ],
+      "surrogate_key": "SHA-256('payment|' || payment_method)"
+    },
+    {
+      "id": "mart.fact_orders",
+      "name": "fact_orders",
+      "layer": "fact",
+      "asset_type": "fact_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "order_key",
+        "order_id",
+        "order_code",
+        "order_date",
+        "updated_at",
+        "order_date_key",
+        "ship_date_key",
+        "is_missing_online_ship_date",
+        "customer_key",
+        "channel_key",
+        "payment_key",
+        "status",
+        "total_amount",
+        "total_discount",
+        "net_amount",
+        "total_cost"
+      ],
+      "partition_by": "order_date",
+      "cluster_by": [
+        "status",
+        "channel_key",
+        "customer_key"
+      ]
+    },
+    {
+      "id": "mart.fact_order_items",
+      "name": "fact_order_items",
+      "layer": "fact",
+      "asset_type": "fact_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "order_item_key",
+        "order_detail_id",
+        "order_id",
+        "order_key",
+        "product_key",
+        "product_version_key",
+        "order_date_key",
+        "quantity",
+        "unit_price",
+        "unit_cost",
+        "discount_rate",
+        "discount_amount",
+        "line_total",
+        "line_cost",
+        "line_profit"
+      ],
+      "partition_by": "order_date",
+      "cluster_by": [
+        "product_key",
+        "order_key"
+      ]
+    },
+    {
+      "id": "mart.fact_returns",
+      "name": "fact_returns",
+      "layer": "fact",
+      "asset_type": "fact_table",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "INTERNAL",
+      "pii_restricted_columns": [],
+      "columns": [
+        "return_key",
+        "return_id",
+        "order_id",
+        "order_key",
+        "returned_date_key",
+        "returned_date",
+        "returned_at",
+        "return_lead_days",
+        "is_temporal_anomaly",
+        "reason"
+      ],
+      "partition_by": "returned_date",
+      "cluster_by": [
+        "is_temporal_anomaly",
+        "reason"
+      ]
+    },
+    {
+      "id": "mart.mart_rfm_snapshot",
+      "name": "mart_rfm_snapshot",
+      "layer": "rfm_mart",
+      "asset_type": "analytical_mart",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "PSEUDONYMIZED",
+      "pii_restricted_columns": [],
+      "columns": [
+        "snapshot_date",
+        "customer_key",
+        "customer_id",
+        "recency_days",
+        "frequency_orders",
+        "monetary_value",
+        "r_score",
+        "f_score",
+        "m_score",
+        "rfm_score",
+        "rfm_segment"
+      ],
+      "grain": "(snapshot_date, customer_key)",
+      "partition_by": "snapshot_date",
+      "cluster_by": [
+        "rfm_segment",
+        "customer_key"
+      ]
+    },
+    {
+      "id": "bi.vw_monthly_kpi",
+      "name": "vw_monthly_kpi",
+      "layer": "bi_view",
+      "asset_type": "semantic_view",
+      "trust_zone": "Zone B - Governed Semantic Layer",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Monthly revenue, COGS, gross margin %, AOV, discounts, and Vietnamese Tet/Year-End seasonality."
+    },
+    {
+      "id": "bi.vw_channel_performance",
+      "name": "vw_channel_performance",
+      "layer": "bi_view",
+      "asset_type": "semantic_view",
+      "trust_zone": "Zone B - Governed Semantic Layer",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Omnichannel comparison across 6 physical stores, Web, and App including missing online ship-date tracking."
+    },
+    {
+      "id": "bi.vw_return_metrics",
+      "name": "vw_return_metrics",
+      "layer": "bi_view",
+      "asset_type": "semantic_view",
+      "trust_zone": "Zone B - Governed Semantic Layer",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Order-cohort return value and clean operational lead time excluding 4 flagged temporal anomalies."
+    },
+    {
+      "id": "bi.vw_product_margin_history",
+      "name": "vw_product_margin_history",
+      "layer": "bi_view",
+      "asset_type": "semantic_view",
+      "trust_zone": "Zone B - Governed Semantic Layer",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Point-in-time SCD Type 2 SKU margin attribution across 71 historical price/cost versions."
+    },
+    {
+      "id": "bi.vw_dq_executive_summary",
+      "name": "vw_dq_executive_summary",
+      "layer": "bi_view",
+      "asset_type": "semantic_view",
+      "trust_zone": "Zone B - Governed Semantic Layer",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Executive roll-up of automated CRITICAL/WARNING DQ gate results and PDPL compliance status."
+    },
+    {
+      "id": "mining.mart_market_basket_rules",
+      "name": "mart_market_basket_rules",
+      "layer": "analytics_mining_mart",
+      "asset_type": "analytics_mining_mart",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "description": "Product affinity & co-purchase association rules (support, confidence, lift) for cross-sell bundles."
+    },
+    {
+      "id": "mining.mart_rfm_kmeans_clusters",
+      "name": "mart_rfm_kmeans_clusters",
+      "layer": "analytics_mining_mart",
+      "asset_type": "analytics_mining_mart",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "PSEUDONYMIZED",
+      "pii_restricted_columns": [],
+      "description": "Unsupervised K-Means++ clustering in log1p + Z-score RFM space vs. rule-based NTILE(5) segments (pseudonymized)."
+    },
+    {
+      "id": "mining.mart_return_risk_scores",
+      "name": "mart_return_risk_scores",
+      "layer": "analytics_mining_mart",
+      "asset_type": "analytics_mining_mart",
+      "trust_zone": "Zone B - Governed Analytics Mart",
+      "pii_classification": "PSEUDONYMIZED",
+      "pii_restricted_columns": [],
+      "description": "Leakage-free out-of-time 2023->2024 post-fulfillment return-risk propensity scoring (L2 class-weighted logistic regression, order-time features only; mart.fact_returns is explicitly excluded as a feature and used strictly for timestamp-only point-in-time returned_at label & prior-return observability gating)."
+    },
+    {
+      "id": "pbi.page_1_business_performance",
+      "name": "Page 1: Business Performance Dashboard",
+      "layer": "bi_dashboard_page",
+      "asset_type": "powerbi_report_page",
+      "trust_zone": "Zone B - Executive BI Consumption",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "preview_artifact": "powerbi/dashboard1.jpg",
+      "description": "Executive revenue, gross profit, margin %, Tet/Year-End seasonality, and omnichannel mix."
+    },
+    {
+      "id": "pbi.page_2_product_performance",
+      "name": "Page 2: Product Performance Dashboard",
+      "layer": "bi_dashboard_page",
+      "asset_type": "powerbi_report_page",
+      "trust_zone": "Zone B - Executive BI Consumption",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "preview_artifact": "powerbi/dashboard2.jpg",
+      "description": "Category/brand profitability, SCD2 price-change margin waterfall, and basket cross-sell insights."
+    },
+    {
+      "id": "pbi.page_3_rfm_segmentation",
+      "name": "Page 3: RFM Customer Segmentation Dashboard",
+      "layer": "bi_dashboard_page",
+      "asset_type": "powerbi_report_page",
+      "trust_zone": "Zone B - Executive BI Consumption",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "preview_artifact": "powerbi/dashboard3.jpg",
+      "description": "Multi-snapshot RFM segment distribution, At-Risk win-back pool, and unsupervised K-Means++ customer clusters."
+    },
+    {
+      "id": "pbi.page_4_order_operations_dq",
+      "name": "Page 4: Order Operations & Data Quality Dashboard",
+      "layer": "bi_dashboard_page",
+      "asset_type": "powerbi_report_page",
+      "trust_zone": "Zone B - Executive BI Consumption",
+      "pii_classification": "NONE",
+      "pii_restricted_columns": [],
+      "preview_artifact": "powerbi/dashboard4.jpg",
+      "description": "Fulfillment ship-date SLA, return lead-time monitoring, temporal anomaly quarantine, DQ gate health, and leakage-free return-risk scoring."
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "raw.sales_channels->stg.stg_sales_channels",
+      "source": "raw.sales_channels",
+      "target": "stg.stg_sales_channels",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/sales_channels.csv into stg_sales_channels."
+    },
+    {
+      "edge_id": "raw.product_categories->stg.stg_product_categories",
+      "source": "raw.product_categories",
+      "target": "stg.stg_product_categories",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/product_categories.csv into stg_product_categories."
+    },
+    {
+      "edge_id": "raw.products->stg.stg_products",
+      "source": "raw.products",
+      "target": "stg.stg_products",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/products.csv into stg_products."
+    },
+    {
+      "edge_id": "raw.customers->stg.stg_customers",
+      "source": "raw.customers",
+      "target": "stg.stg_customers",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_RESTRICTED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/customers.csv into stg_customers."
+    },
+    {
+      "edge_id": "raw.orders->stg.stg_orders",
+      "source": "raw.orders",
+      "target": "stg.stg_orders",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/orders.csv into stg_orders."
+    },
+    {
+      "edge_id": "raw.order_details->stg.stg_order_details",
+      "source": "raw.order_details",
+      "target": "stg.stg_order_details",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/order_details.csv into stg_order_details."
+    },
+    {
+      "edge_id": "raw.order_returns->stg.stg_order_returns",
+      "source": "raw.order_returns",
+      "target": "stg.stg_order_returns",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/order_returns.csv into stg_order_returns."
+    },
+    {
+      "edge_id": "raw.product_price_history->stg.stg_product_price_history",
+      "source": "raw.product_price_history",
+      "target": "stg.stg_product_price_history",
+      "transformation_type": "csv_bom_strip_and_contract_gate",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "UTF-8 BOM strip, pre-ingestion data contract check, and dead-letter quarantine routing from data/raw/product_price_history.csv into stg_product_price_history."
+    },
+    {
+      "edge_id": "stg.stg_customers->mart.dim_customer",
+      "source": "stg.stg_customers",
+      "target": "mart.dim_customer",
+      "transformation_type": "pdpl_pii_strip_and_sha256_pseudonymization",
+      "pii_tags": [
+        "PII_STRIPPED_PDPL_91_2025_QH15",
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": true,
+      "description": "Removes first_name, last_name, email, phone, date_of_birth at the PDPL 91/2025/QH15 trust boundary, generates deterministic SHA-256 customer_key, and masks display name."
+    },
+    {
+      "edge_id": "stg.stg_products->mart.dim_product",
+      "source": "stg.stg_products",
+      "target": "mart.dim_product",
+      "transformation_type": "scd1_catalog_join",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Joins stg_products with category taxonomy into SCD Type 1 dim_product."
+    },
+    {
+      "edge_id": "stg.stg_product_categories->mart.dim_product",
+      "source": "stg.stg_product_categories",
+      "target": "mart.dim_product",
+      "transformation_type": "category_hierarchy_enrichment",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Denormalizes category and sub_category onto dim_product."
+    },
+    {
+      "edge_id": "stg.stg_products->mart.dim_product_scd2",
+      "source": "stg.stg_products",
+      "target": "mart.dim_product_scd2",
+      "transformation_type": "scd2_price_history_timeline",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Provides base catalog attributes and initial pricing for dim_product_scd2."
+    },
+    {
+      "edge_id": "stg.stg_product_categories->mart.dim_product_scd2",
+      "source": "stg.stg_product_categories",
+      "target": "mart.dim_product_scd2",
+      "transformation_type": "category_hierarchy_enrichment",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Denormalizes category and sub_category onto every SCD Type 2 version."
+    },
+    {
+      "edge_id": "stg.stg_product_price_history->mart.dim_product_scd2",
+      "source": "stg.stg_product_price_history",
+      "target": "mart.dim_product_scd2",
+      "transformation_type": "scd2_price_history_timeline",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Applies 24 MSRP/COST price transitions across 14 SKUs to build 71 contiguous SCD2 intervals."
+    },
+    {
+      "edge_id": "stg.stg_sales_channels->mart.dim_channel",
+      "source": "stg.stg_sales_channels",
+      "target": "mart.dim_channel",
+      "transformation_type": "sha256_dimension_upsert",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Derives channel_key and is_online flag (Web/App vs Physical stores)."
+    },
+    {
+      "edge_id": "stg.stg_orders->mart.dim_payment",
+      "source": "stg.stg_orders",
+      "target": "mart.dim_payment",
+      "transformation_type": "distinct_payment_extraction",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Extracts conformed payment_method dimension with Cash/Card/Digital category."
+    },
+    {
+      "edge_id": "stg.stg_orders->mart.dim_date",
+      "source": "stg.stg_orders",
+      "target": "mart.dim_date",
+      "transformation_type": "calendar_date_coverage_validation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Ensures generated calendar dimension covers all order_date/ship_date values + sentinels (-1/-2/-3)."
+    },
+    {
+      "edge_id": "stg.stg_orders->mart.fact_orders",
+      "source": "stg.stg_orders",
+      "target": "mart.fact_orders",
+      "transformation_type": "watermark_incremental_merge",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Watermark-driven incremental MERGE on updated_at with ship_date sentinel mapping (-1/-2/-3)."
+    },
+    {
+      "edge_id": "mart.dim_date->mart.fact_orders",
+      "source": "mart.dim_date",
+      "target": "mart.fact_orders",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds conformed surrogate key from mart.dim_date into fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_customer->mart.fact_orders",
+      "source": "mart.dim_customer",
+      "target": "mart.fact_orders",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds conformed surrogate key from mart.dim_customer into fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_channel->mart.fact_orders",
+      "source": "mart.dim_channel",
+      "target": "mart.fact_orders",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds conformed surrogate key from mart.dim_channel into fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_payment->mart.fact_orders",
+      "source": "mart.dim_payment",
+      "target": "mart.fact_orders",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds conformed surrogate key from mart.dim_payment into fact_orders."
+    },
+    {
+      "edge_id": "stg.stg_order_details->mart.fact_order_items",
+      "source": "stg.stg_order_details",
+      "target": "mart.fact_order_items",
+      "transformation_type": "watermark_incremental_merge",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Loads order line items with exact VND financial reconciliation against fact_orders."
+    },
+    {
+      "edge_id": "mart.fact_orders->mart.fact_order_items",
+      "source": "mart.fact_orders",
+      "target": "mart.fact_order_items",
+      "transformation_type": "order_header_fk_alignment",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Resolves order_key and order_date_key for each order line item."
+    },
+    {
+      "edge_id": "mart.dim_product->mart.fact_order_items",
+      "source": "mart.dim_product",
+      "target": "mart.fact_order_items",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds current product_key to fact_order_items."
+    },
+    {
+      "edge_id": "mart.dim_product_scd2->mart.fact_order_items",
+      "source": "mart.dim_product_scd2",
+      "target": "mart.fact_order_items",
+      "transformation_type": "point_in_time_scd2_fact_join",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Point-in-time range join on order_date IN [valid_from, valid_to) resolving product_version_key."
+    },
+    {
+      "edge_id": "mart.dim_date->mart.fact_order_items",
+      "source": "mart.dim_date",
+      "target": "mart.fact_order_items",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds order_date_key to conformed dim_date."
+    },
+    {
+      "edge_id": "stg.stg_order_returns->mart.fact_returns",
+      "source": "stg.stg_order_returns",
+      "target": "mart.fact_returns",
+      "transformation_type": "temporal_anomaly_flag_and_quarantine",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Loads return events and flags returned_at < order_date rows (is_temporal_anomaly=TRUE)."
+    },
+    {
+      "edge_id": "mart.fact_orders->mart.fact_returns",
+      "source": "mart.fact_orders",
+      "target": "mart.fact_returns",
+      "transformation_type": "return_lead_time_calculation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Joins returned orders to compute return_lead_days and detect temporal anomalies."
+    },
+    {
+      "edge_id": "mart.dim_date->mart.fact_returns",
+      "source": "mart.dim_date",
+      "target": "mart.fact_returns",
+      "transformation_type": "conformed_dimension_fk_binding",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Binds returned_date_key to conformed dim_date."
+    },
+    {
+      "edge_id": "mart.fact_orders->mart.mart_rfm_snapshot",
+      "source": "mart.fact_orders",
+      "target": "mart.mart_rfm_snapshot",
+      "transformation_type": "ntile5_rfm_snapshot_aggregation",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Computes Recency, Frequency, Monetary NTILE(5) quintiles on Completed orders per snapshot_date."
+    },
+    {
+      "edge_id": "mart.dim_customer->mart.mart_rfm_snapshot",
+      "source": "mart.dim_customer",
+      "target": "mart.mart_rfm_snapshot",
+      "transformation_type": "pseudonymized_customer_cohort_join",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Joins pseudonymized customer_key (zero raw PII) into RFM snapshots."
+    },
+    {
+      "edge_id": "mart.fact_orders->bi.vw_monthly_kpi",
+      "source": "mart.fact_orders",
+      "target": "bi.vw_monthly_kpi",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_monthly_kpi from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_date->bi.vw_monthly_kpi",
+      "source": "mart.dim_date",
+      "target": "bi.vw_monthly_kpi",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_monthly_kpi from mart.dim_date."
+    },
+    {
+      "edge_id": "mart.fact_orders->bi.vw_channel_performance",
+      "source": "mart.fact_orders",
+      "target": "bi.vw_channel_performance",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_channel_performance from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_channel->bi.vw_channel_performance",
+      "source": "mart.dim_channel",
+      "target": "bi.vw_channel_performance",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_channel_performance from mart.dim_channel."
+    },
+    {
+      "edge_id": "mart.dim_date->bi.vw_channel_performance",
+      "source": "mart.dim_date",
+      "target": "bi.vw_channel_performance",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_channel_performance from mart.dim_date."
+    },
+    {
+      "edge_id": "mart.fact_returns->bi.vw_return_metrics",
+      "source": "mart.fact_returns",
+      "target": "bi.vw_return_metrics",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_return_metrics from mart.fact_returns."
+    },
+    {
+      "edge_id": "mart.fact_orders->bi.vw_return_metrics",
+      "source": "mart.fact_orders",
+      "target": "bi.vw_return_metrics",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_return_metrics from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_date->bi.vw_return_metrics",
+      "source": "mart.dim_date",
+      "target": "bi.vw_return_metrics",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_return_metrics from mart.dim_date."
+    },
+    {
+      "edge_id": "mart.fact_order_items->bi.vw_product_margin_history",
+      "source": "mart.fact_order_items",
+      "target": "bi.vw_product_margin_history",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_product_margin_history from mart.fact_order_items."
+    },
+    {
+      "edge_id": "mart.fact_orders->bi.vw_product_margin_history",
+      "source": "mart.fact_orders",
+      "target": "bi.vw_product_margin_history",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_product_margin_history from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_product_scd2->bi.vw_product_margin_history",
+      "source": "mart.dim_product_scd2",
+      "target": "bi.vw_product_margin_history",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_product_margin_history from mart.dim_product_scd2."
+    },
+    {
+      "edge_id": "mart.dim_date->bi.vw_product_margin_history",
+      "source": "mart.dim_date",
+      "target": "bi.vw_product_margin_history",
+      "transformation_type": "semantic_kpi_view",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_product_margin_history from mart.dim_date."
+    },
+    {
+      "edge_id": "mart.fact_orders->bi.vw_dq_executive_summary",
+      "source": "mart.fact_orders",
+      "target": "bi.vw_dq_executive_summary",
+      "transformation_type": "dq_audit_aggregation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_dq_executive_summary from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.fact_order_items->bi.vw_dq_executive_summary",
+      "source": "mart.fact_order_items",
+      "target": "bi.vw_dq_executive_summary",
+      "transformation_type": "dq_audit_aggregation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_dq_executive_summary from mart.fact_order_items."
+    },
+    {
+      "edge_id": "mart.fact_returns->bi.vw_dq_executive_summary",
+      "source": "mart.fact_returns",
+      "target": "bi.vw_dq_executive_summary",
+      "transformation_type": "dq_audit_aggregation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_dq_executive_summary from mart.fact_returns."
+    },
+    {
+      "edge_id": "mart.dim_customer->bi.vw_dq_executive_summary",
+      "source": "mart.dim_customer",
+      "target": "bi.vw_dq_executive_summary",
+      "transformation_type": "dq_audit_aggregation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_dq_executive_summary from mart.dim_customer."
+    },
+    {
+      "edge_id": "mart.dim_product_scd2->bi.vw_dq_executive_summary",
+      "source": "mart.dim_product_scd2",
+      "target": "bi.vw_dq_executive_summary",
+      "transformation_type": "dq_audit_aggregation",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds vw_dq_executive_summary from mart.dim_product_scd2."
+    },
+    {
+      "edge_id": "mart.fact_order_items->mining.mart_market_basket_rules",
+      "source": "mart.fact_order_items",
+      "target": "mining.mart_market_basket_rules",
+      "transformation_type": "market_basket_association_mining",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_market_basket_rules from mart.fact_order_items."
+    },
+    {
+      "edge_id": "mart.fact_orders->mining.mart_market_basket_rules",
+      "source": "mart.fact_orders",
+      "target": "mining.mart_market_basket_rules",
+      "transformation_type": "market_basket_association_mining",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_market_basket_rules from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.dim_product->mining.mart_market_basket_rules",
+      "source": "mart.dim_product",
+      "target": "mining.mart_market_basket_rules",
+      "transformation_type": "market_basket_association_mining",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_market_basket_rules from mart.dim_product."
+    },
+    {
+      "edge_id": "mart.mart_rfm_snapshot->mining.mart_rfm_kmeans_clusters",
+      "source": "mart.mart_rfm_snapshot",
+      "target": "mining.mart_rfm_kmeans_clusters",
+      "transformation_type": "rfm_kmeans_plus_plus_clustering",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_rfm_kmeans_clusters from mart.mart_rfm_snapshot."
+    },
+    {
+      "edge_id": "mart.dim_customer->mining.mart_rfm_kmeans_clusters",
+      "source": "mart.dim_customer",
+      "target": "mining.mart_rfm_kmeans_clusters",
+      "transformation_type": "rfm_kmeans_plus_plus_clustering",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_rfm_kmeans_clusters from mart.dim_customer."
+    },
+    {
+      "edge_id": "mart.fact_orders->mining.mart_return_risk_scores",
+      "source": "mart.fact_orders",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.fact_orders."
+    },
+    {
+      "edge_id": "mart.fact_order_items->mining.mart_return_risk_scores",
+      "source": "mart.fact_order_items",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.fact_order_items."
+    },
+    {
+      "edge_id": "mart.dim_product->mining.mart_return_risk_scores",
+      "source": "mart.dim_product",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.dim_product."
+    },
+    {
+      "edge_id": "mart.dim_channel->mining.mart_return_risk_scores",
+      "source": "mart.dim_channel",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.dim_channel."
+    },
+    {
+      "edge_id": "mart.dim_date->mining.mart_return_risk_scores",
+      "source": "mart.dim_date",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.dim_date."
+    },
+    {
+      "edge_id": "mart.dim_customer->mining.mart_return_risk_scores",
+      "source": "mart.dim_customer",
+      "target": "mining.mart_return_risk_scores",
+      "transformation_type": "leakage_free_return_risk_scoring",
+      "pii_tags": [
+        "PSEUDONYMIZED"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Feeds analytics mining mart mart_return_risk_scores from mart.dim_customer."
+    },
+    {
+      "edge_id": "bi.vw_monthly_kpi->pbi.page_1_business_performance",
+      "source": "bi.vw_monthly_kpi",
+      "target": "pbi.page_1_business_performance",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_monthly_kpi on Page 1: Business Performance Dashboard."
+    },
+    {
+      "edge_id": "bi.vw_channel_performance->pbi.page_1_business_performance",
+      "source": "bi.vw_channel_performance",
+      "target": "pbi.page_1_business_performance",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_channel_performance on Page 1: Business Performance Dashboard."
+    },
+    {
+      "edge_id": "bi.vw_product_margin_history->pbi.page_2_product_performance",
+      "source": "bi.vw_product_margin_history",
+      "target": "pbi.page_2_product_performance",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_product_margin_history on Page 2: Product Performance Dashboard."
+    },
+    {
+      "edge_id": "mining.mart_market_basket_rules->pbi.page_2_product_performance",
+      "source": "mining.mart_market_basket_rules",
+      "target": "pbi.page_2_product_performance",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming mining.mart_market_basket_rules on Page 2: Product Performance Dashboard."
+    },
+    {
+      "edge_id": "mart.mart_rfm_snapshot->pbi.page_3_rfm_segmentation",
+      "source": "mart.mart_rfm_snapshot",
+      "target": "pbi.page_3_rfm_segmentation",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming mart.mart_rfm_snapshot on Page 3: RFM Customer Segmentation Dashboard."
+    },
+    {
+      "edge_id": "mining.mart_rfm_kmeans_clusters->pbi.page_3_rfm_segmentation",
+      "source": "mining.mart_rfm_kmeans_clusters",
+      "target": "pbi.page_3_rfm_segmentation",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming mining.mart_rfm_kmeans_clusters on Page 3: RFM Customer Segmentation Dashboard."
+    },
+    {
+      "edge_id": "bi.vw_return_metrics->pbi.page_4_order_operations_dq",
+      "source": "bi.vw_return_metrics",
+      "target": "pbi.page_4_order_operations_dq",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_return_metrics on Page 4: Order Operations & Data Quality Dashboard."
+    },
+    {
+      "edge_id": "bi.vw_dq_executive_summary->pbi.page_4_order_operations_dq",
+      "source": "bi.vw_dq_executive_summary",
+      "target": "pbi.page_4_order_operations_dq",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_dq_executive_summary on Page 4: Order Operations & Data Quality Dashboard."
+    },
+    {
+      "edge_id": "bi.vw_channel_performance->pbi.page_4_order_operations_dq",
+      "source": "bi.vw_channel_performance",
+      "target": "pbi.page_4_order_operations_dq",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming bi.vw_channel_performance on Page 4: Order Operations & Data Quality Dashboard."
+    },
+    {
+      "edge_id": "mining.mart_return_risk_scores->pbi.page_4_order_operations_dq",
+      "source": "mining.mart_return_risk_scores",
+      "target": "pbi.page_4_order_operations_dq",
+      "transformation_type": "powerbi_semantic_consumption",
+      "pii_tags": [
+        "PII_FREE"
+      ],
+      "pdpl_boundary_crossing": false,
+      "description": "Power BI visual query consuming mining.mart_return_risk_scores on Page 4: Order Operations & Data Quality Dashboard."
+    }
+  ],
+  "pre_ingestion_validation_snapshot": {
+    "run_id": "60ea3a76-24e3-4857-9ee4-5a1fae32a3ec",
+    "checked_at": "2026-11-27T21:09:51Z",
+    "overall_status": "PASS_WITH_WARNINGS",
+    "critical_gate_passed": true,
+    "summary": {
+      "tables_checked": 8,
+      "total_rows": 67364,
+      "total_clean_rows": 67364,
+      "total_quarantined_rows": 0,
+      "critical_schema_errors": 0,
+      "critical_row_quarantine_events": 0,
+      "critical_error_count": 0,
+      "temporal_warning_count": 4,
+      "volume_drift_alert_count": 0,
+      "null_ratio_alert_count": 0,
+      "warning_count": 4,
+      "persisted_quarantine_records": 0,
+      "duration_ms": 1755.638
+    }
+  }
+}
