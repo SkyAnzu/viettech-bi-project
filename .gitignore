@@ -9,19 +9,24 @@ __pycache__/
 # Node
 node_modules/
 
-# Env and secrets
+# Env and secrets (explicit GCP credential patterns so benchmarks/*.json stay tracked)
 .env
 .env.*
 config/.env
 config/.env.*
 !.env.example
 !config/.env.example
-*.json
 config/*.json
 *.service-account.json
 *service-account*.json
+*credentials*.json
 viettech-*.json
 report/
+
+# Local SQLite warehouse artifacts
+data/warehouse/*.db
+*.db-wal
+*.db-shm
 
 # Generated data / outputs
 data/staging/
