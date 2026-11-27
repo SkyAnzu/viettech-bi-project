@@ -9,4 +9,4 @@ COPY . .
 
 RUN mkdir -p /app/benchmarks /app/data/warehouse
 
-CMD ["sh", "-c", "python scripts/run_local_warehouse.py --mode full --benchmark && python -m unittest discover -s tests -v"]
+CMD ["sh", "-c", "python scripts/contract_validator.py --raw-dir data/raw --contract config/data_contracts.json --emit-lineage benchmarks/lineage_manifest.json && python scripts/run_local_warehouse.py --mode full --benchmark && python scripts/analytics_mining.py && python -m unittest discover -s tests -v"]
