@@ -73,7 +73,7 @@ def _sq_dist(a: Sequence[float], b: Sequence[float]) -> float:
         d2 = a[2] - b[2]
         return d0 * d0 + d1 * d1 + d2 * d2
     total = 0.0
-    for x, y in zip(a, b):
+    for x, y in zip(a, b, strict=True):
         diff = x - y
         total += diff * diff
     return total
@@ -400,7 +400,7 @@ def _compute_contingency_and_nmi(
     c_counts: Counter[str] = Counter()
     s_counts: Counter[str] = Counter()
 
-    for c, s in zip(cluster_labels, rfm_segments):
+    for c, s in zip(cluster_labels, rfm_segments, strict=True):
         matrix[c][s] += 1
         c_counts[c] += 1
         s_counts[s] += 1

@@ -332,7 +332,7 @@ def train_l2_logistic_regression(
     def _compute_loss(w_vec: Sequence[float], b_val: float) -> float:
         eps = 1e-15
         loss = 0.0
-        for row, y, sw in zip(X_train, y_train, sample_weights):
+        for row, y, sw in zip(X_train, y_train, sample_weights, strict=True):
             z = b_val + sum(map(mul, w_vec, row))
             p = _sigmoid(z)
             if p < eps:
@@ -345,7 +345,7 @@ def train_l2_logistic_regression(
 
     initial_loss = _compute_loss(weights, bias)
 
-    train_triples = list(zip(X_train, y_train, sample_weights))
+    train_triples = list(zip(X_train, y_train, sample_weights, strict=True))
     vel_w = [0.0] * d
     vel_b = 0.0
     momentum = 0.5
@@ -414,7 +414,7 @@ def compute_roc_auc(y_true: Sequence[int], y_score: Sequence[float]) -> float:
     if n_pos == 0 or n_neg == 0:
         return 0.5
 
-    paired = sorted(zip(y_score, y_true), key=lambda t: t[0])
+    paired = sorted(zip(y_score, y_true, strict=True), key=lambda t: t[0])
     sum_pos_ranks = 0.0
     i = 0
     while i < n:
@@ -437,7 +437,7 @@ def compute_pr_auc(y_true: Sequence[int], y_score: Sequence[float]) -> float:
     if total_pos == 0 or n == 0:
         return 0.0
 
-    paired = sorted(zip(y_score, y_true), key=lambda t: -t[0])
+    paired = sorted(zip(y_score, y_true, strict=True), key=lambda t: -t[0])
     tp = 0
     fp = 0
     prev_recall = 0.0
@@ -487,7 +487,7 @@ def compute_topk_metrics(
     prevalence = total_pos / n
     k_count = max(1, math.ceil(n * top_fraction))
 
-    ranked = sorted(zip(y_score, y_true), key=lambda t: -t[0])
+    ranked = sorted(zip(y_score, y_true, strict=True), key=lambda t: -t[0])
     top_slice = ranked[:k_count]
     tp_top = sum(y for _, y in top_slice)
     precision_k = tp_top / k_count
@@ -603,7 +603,7 @@ def run_return_risk_module(
                 "train_std": round(s, 6),
             }
             for fname, w, m, s in zip(
-                FEATURE_NAMES, model["weights"], train_means, train_stds
+                FEATURE_NAMES, model["weights"], train_means, train_stds, strict=True
             )
         ],
         key=lambda item: -item["abs_weight"],
@@ -637,7 +637,7 @@ def run_return_risk_module(
                     MODEL_VERSION,
                     scored_at,
                 )
-                for rec, prob, dec in zip(test_records, test_probs, deciles)
+                for rec, prob, dec in zip(test_records, test_probs, deciles, strict=True)
             ],
         )
 
