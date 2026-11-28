@@ -27,12 +27,12 @@ jobs:
 
       - name: Static analysis gates (Ruff lint & Mypy type check)
         run: |
-          ruff check src scripts tests
+          ruff check src scripts tests orchestration
           mypy src/viettech
 
       - name: Syntax check Python modules & scripts
         run: |
-          python -m compileall -q src scripts tests data/raw/generate_data.py
+          python -m compileall -q src scripts tests orchestration data/raw/generate_data.py
 
       - name: Pre-ingestion Data Contract & Lineage validation
         run: |
@@ -48,6 +48,13 @@ jobs:
         run: |
           python scripts/run_local_warehouse.py --mode full --benchmark
           python scripts/analytics_mining.py
+
+      - name: Run Pure-Python DAG Orchestrator end-to-end & metastore status check
+        run: |
+          ORCH_TMP=$(mktemp -d)
+          python scripts/run_orchestrator.py --mode full --logical-date 2025-01-01 --db-path "$ORCH_TMP/viettech_orch_ci.db" --state-db-path "$ORCH_TMP/orchestrator_state_ci.db" --skip-mining
+          python scripts/run_orchestrator.py --status --state-db-path "$ORCH_TMP/orchestrator_state_ci.db"
+          rm -rf "$ORCH_TMP"
 
       - name: Run automated tests with White-Box branch coverage gate (>= 75%)
         run: |

@@ -34,6 +34,7 @@ flowchart LR
 ```
 
 - **Full C4 Diagrams, Data Lineage & Star Schema ERD:** [`docs/architecture/system-architecture.md`](./docs/architecture/system-architecture.md)
+- **Enterprise DAG Orchestration & Apache Airflow 2.9+ Guide:** [`orchestration/README.md`](./orchestration/README.md)
 - **Single Source of Truth Metric Dictionary:** [`docs/KPI_GLOSSARY.md`](./docs/KPI_GLOSSARY.md)
 - **Vietnamese Engineering Deep-Dive & Interview Playbook (Before -> After + Greenfield Blueprint):** [`docs/ENGINEERING_PLAYBOOK_VI.md`](./docs/ENGINEERING_PLAYBOOK_VI.md)
 
@@ -46,10 +47,12 @@ viettech-bi-project/
 │   ├── common/                      # SHA-256 keys, PDPL masking, BOM/CSV utils, SQLite helpers
 │   ├── contracts/                   # Typed parsers, CSV quarantine validator, 38-node lineage DAG
 │   ├── warehouse/                   # DDL, staging, SCD2 dims, CDC facts, 15-check DQ, benchmarks
-│   └── mining/                      # Market Basket Lift, K-Means++, leakage-free Return-Risk
-├── scripts/                         # Thin backward-compatible CLI facades + BigQuery runners
+│   ├── mining/                      # Market Basket Lift, K-Means++, leakage-free Return-Risk
+│   └── orchestration/               # State-machine DAG engine, SQLite metastore, 7-task Retail DAG
+├── orchestration/                   # Production Apache Airflow 2.9+ TaskFlow API DAG & guide
+├── scripts/                         # Thin backward-compatible CLI facades + orchestrator & BQ runners
 ├── sql/                             # Dual-engine BigQuery SQL warehouse pipeline (01..06)
-├── tests/                           # White-Box unit tests + warehouse, contract & mining suites
+├── tests/                           # White-Box & Gray-Box suites (warehouse, contracts, mining, DAG)
 └── .github/workflows/ci.yml         # ruff + mypy + py_compile + E2E runs + >=75% branch coverage
 ```
 
@@ -140,11 +143,16 @@ python scripts/analytics_mining.py
 # 3. Run incremental watermark CDC simulation
 python scripts/run_local_warehouse.py --mode incremental --watermark "2024-12-02 00:00:00"
 
-# 4. Validate BigQuery SQL template rendering & CSV BOM hygiene offline
+# 4. Run the 7-task Pure-Python DAG Orchestrator (Contracts -> SCD2 -> RFM -> DQ -> Mining) & inspect metastore
+python scripts/run_orchestrator.py --mode full --logical-date 2025-01-01
+python scripts/run_orchestrator.py --mode full --backfill-dates 2024-11-01 2024-12-01 2025-01-01 --skip-mining
+python scripts/run_orchestrator.py --status
+
+# 5. Validate BigQuery SQL template rendering & CSV BOM hygiene offline
 python scripts/etl_csv_to_bq.py --dry-run
 python scripts/run_sql_pipeline.py --dry-run
 
-# 5. Run full automated test suite (20 tests: warehouse + contracts + data mining)
+# 6. Run full automated test suite (White-Box + warehouse + contracts + data mining + orchestration)
 python -m unittest discover -s tests -v
 ```
 
