@@ -335,7 +335,7 @@ class TestAnalyticsMiningWarehouseIntegration(unittest.TestCase):
         # Verify scaling diagnostics: scaled mean ~ 0, std ~ 1; raw monetary dominates > 99.99%
         sd = km["scaling_diagnostics"]
         self.assertGreater(sd["raw_variance_share_pct"][2], 99.99)
-        for m_val, s_val in zip(sd["scaled_means"], sd["scaled_stds"]):
+        for m_val, s_val in zip(sd["scaled_means"], sd["scaled_stds"], strict=True):
             self.assertAlmostEqual(m_val, 0.0, places=6)
             self.assertAlmostEqual(s_val, 1.0, places=6)
 

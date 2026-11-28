@@ -8,6 +8,8 @@ on:
 jobs:
   verify-warehouse:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src
 
     steps:
       - name: Checkout repository
@@ -18,9 +20,19 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Syntax check Python scripts
+      - name: Install static quality & coverage dev tools
         run: |
-          python -m py_compile scripts/etl_csv_to_bq.py scripts/run_sql_pipeline.py scripts/run_local_warehouse.py scripts/contract_validator.py scripts/analytics_mining.py data/raw/generate_data.py
+          python -m pip install --upgrade pip
+          pip install ruff mypy coverage
+
+      - name: Static analysis gates (Ruff lint & Mypy type check)
+        run: |
+          ruff check src scripts tests
+          mypy src/viettech
+
+      - name: Syntax check Python modules & scripts
+        run: |
+          python -m compileall -q src scripts tests data/raw/generate_data.py
 
       - name: Pre-ingestion Data Contract & Lineage validation
         run: |
@@ -37,6 +49,7 @@ jobs:
           python scripts/run_local_warehouse.py --mode full --benchmark
           python scripts/analytics_mining.py
 
-      - name: Run automated warehouse, contract & analytics test suite
+      - name: Run automated tests with White-Box branch coverage gate (>= 75%)
         run: |
-          python -m unittest discover -s tests -v
+          coverage run --branch -m unittest discover -s tests -v
+          coverage report --show-missing --fail-under=75

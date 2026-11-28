@@ -9,7 +9,6 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 import shutil
-import sqlite3
 import subprocess
 import sys
 import tempfile
