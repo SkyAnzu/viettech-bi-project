@@ -99,7 +99,7 @@ class TestVietTechDataContracts(unittest.TestCase):
             conn.close()
 
         # Emit and validate lineage manifest DAG structure
-        manifest = cv.export_lineage_manifest(
+        cv.export_lineage_manifest(
             output_path=lineage_out,
             contract=CONTRACT_PATH,
             validation_summary=result,

@@ -37,6 +37,22 @@ flowchart LR
 - **Single Source of Truth Metric Dictionary:** [`docs/KPI_GLOSSARY.md`](./docs/KPI_GLOSSARY.md)
 - **Vietnamese Engineering Deep-Dive & Interview Playbook (Before -> After + Greenfield Blueprint):** [`docs/ENGINEERING_PLAYBOOK_VI.md`](./docs/ENGINEERING_PLAYBOOK_VI.md)
 
+### Project Structure (PEP 621 `src/` Layout & CI Quality Gates)
+
+```text
+viettech-bi-project/
+├── pyproject.toml                   # PEP 621 metadata + ruff, mypy, branch coverage config
+├── src/viettech/                    # Pure Python 3.12 stdlib modular package (0 runtime deps)
+│   ├── common/                      # SHA-256 keys, PDPL masking, BOM/CSV utils, SQLite helpers
+│   ├── contracts/                   # Typed parsers, CSV quarantine validator, 38-node lineage DAG
+│   ├── warehouse/                   # DDL, staging, SCD2 dims, CDC facts, 15-check DQ, benchmarks
+│   └── mining/                      # Market Basket Lift, K-Means++, leakage-free Return-Risk
+├── scripts/                         # Thin backward-compatible CLI facades + BigQuery runners
+├── sql/                             # Dual-engine BigQuery SQL warehouse pipeline (01..06)
+├── tests/                           # White-Box unit tests + warehouse, contract & mining suites
+└── .github/workflows/ci.yml         # ruff + mypy + py_compile + E2E runs + >=75% branch coverage
+```
+
 ---
 
 ## 3. Verified Results & Empirical Benchmarks (`[SYNTHETIC DATASET]`)
